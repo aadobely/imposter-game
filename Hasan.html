@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>من المحتال؟ - Who is the Imposter? Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+```
+    body {
+        font-family: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: #333;
+    }
+
+    .container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        max-width: 500px;
+        width: 100%;
+        padding: 30px;
+        animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        text-align: center;
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 32px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 14px;
+    }
+
+    .screen {
+        display: none;
+    }
+
+    .screen.active {
+        display: block;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 100%;
+        margin: 10px 0;
+        transition: all 0.3s ease;
+        font-family: inherit;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:active { transform: translateY(0); }
+    .btn-secondary { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .btn-success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .btn-danger { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .btn-small { padding: 8px 15px; font-size: 14px; width: auto; margin: 5px; }
+
+    .toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin: 15px 0;
+    }
+
+    .toggle-label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 30px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+
+    input, select {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-size: 16px;
+        margin: 10px 0;
+        font-family: inherit;
+        transition: border-color 0.3s;
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .player-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin: 10px 0;
+    }
+
+    .player-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .player-actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .delete-btn {
+        background: #ff4444;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .edit-btn {
+        background: #4facfe;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .card-reveal {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 60px 30px;
+        border-radius: 20px;
+        margin: 30px 0;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: cardFlip 0.6s ease-out;
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @keyframes cardFlip {
+        0% { transform: rotateY(90deg); opacity: 0; }
+        100% { transform: rotateY(0deg); opacity: 1; }
+    }
+
+    .card-word {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 20px 0;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .card-hint {
+        font-size: 24px;
+        opacity: 0.9;
+        margin-top: 10px;
+    }
+
+    .card-role {
+        font-size: 20px;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 10px;
+    }
+
+    .imposter-card {
+        background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+    }
+
+    .kids-card {
+        background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        color: #333;
+    }
+
+    .privacy-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.98);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+
+    .privacy-screen.active {
+        display: flex;
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .privacy-content {
+        text-align: center;
+        color: white;
+        padding: 40px;
+        max-width: 400px;
+    }
+
+    .privacy-icon {
+        font-size: 100px;
+        margin-bottom: 20px;
+        animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    .privacy-text {
+        font-size: 28px;
+        margin-bottom: 20px;
+        font-weight: bold;
+    }
+
+    .next-player-name {
+        font-size: 36px;
+        color: #ffeaa7;
+        margin: 20px 0;
+        padding: 20px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 15px;
+        border: 3px solid #ffeaa7;
+    }
+
+    .voting-turn {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .current-voter {
+        font-size: 32px;
+        font-weight: bold;
+        color: #667eea;
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 15px;
+        border: 3px solid #667eea;
+    }
+
+    .votes-remaining {
+        font-size: 18px;
+        color: #ff6b6b;
+        margin: 10px 0;
+        padding: 10px;
+        background: #fff5f5;
+        border-radius: 10px;
+    }
+
+    .imposter-vote-info {
+        font-size: 16px;
+        color: #667eea;
+        margin: 10px 0;
+        padding: 15px;
+        background: #f0f4ff;
+        border-radius: 10px;
+        border: 2px dashed #667eea;
+    }
+
+    .vote-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .vote-card {
+        background: #f8f9fa;
+        border: 3px solid transparent;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .vote-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .vote-card.selected {
+        border-color: #667eea;
+        background: #e8eaf6;
+        transform: scale(1.05);
+    }
+
+    .vote-card-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .suspense-container {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .suspense-text {
+        font-size: 32px;
+        font-weight: bold;
+        margin: 30px 0;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    .reveal-imposter {
+        font-size: 48px;
+        margin: 40px 0;
+        animation: revealAnimation 1s ease-out;
+    }
+
+    @keyframes revealAnimation {
+        0% { transform: scale(0) rotate(180deg); opacity: 0; }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        animation: confetti-fall 3s ease-out forwards;
+    }
+
+    @keyframes confetti-fall {
+        to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    .results-container {
+        text-align: center;
+    }
+
+    .winner-banner {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin: 20px 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .score-list {
+        margin: 20px 0;
+    }
+
+    .score-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin: 10px 0;
+    }
+
+    .score-rank {
+        font-size: 24px;
+        font-weight: bold;
+        margin-left: 15px;
+    }
+
+    .score-name {
+        flex: 1;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .score-points {
+        font-size: 20px;
+        color: #667eea;
+        font-weight: bold;
+    }
+
+    .score-breakdown {
+        font-size: 12px;
+        color: #666;
+        display: block;
+        margin-top: 5px;
+    }
+
+    .session-card {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+        margin: 15px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .session-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .session-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .session-info {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .stats-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        background: #667eea;
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        margin: 5px;
+    }
+
+    .timer-container {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .timer-display {
+        font-size: 72px;
+        font-weight: bold;
+        color: #667eea;
+        margin: 20px 0;
+    }
+
+    .timer-display.warning {
+        color: #ff4444;
+        animation: timerBlink 1s infinite;
+    }
+
+    @keyframes timerBlink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+
+    .empty-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+    }
+
+    .history-item {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        margin: 10px 0;
+        border-right: 5px solid #667eea;
+    }
+
+    .player-wheel {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        margin: 30px auto;
+        border-radius: 50%;
+        border: 10px solid #667eea;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    .player-wheel.spinning {
+        animation: wheelSpin 2s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    }
+
+    @keyframes wheelSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(1800deg); }
+    }
+
+    .wheel-player-name {
+        font-size: 36px;
+        font-weight: bold;
+        color: #667eea;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .selected-player-banner {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin: 20px 0;
+        animation: bounceIn 0.6s ease-out;
+    }
+
+    @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .selected-player-name {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .speaker-selection {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        text-align: center;
+    }
+
+    .speaker-wheel {
+        width: 200px;
+        height: 200px;
+        margin: 20px auto;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 8px solid white;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+    }
+
+    .speaker-wheel.spinning {
+        animation: speakerSpin 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    @keyframes speakerSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(1080deg); }
+    }
+
+    .speaker-name {
+        font-size: 28px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .selected-speaker {
+        background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+        color: #333;
+        padding: 20px;
+        border-radius: 12px;
+        margin: 15px 0;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .player-management {
+        background: #f0f4ff;
+        border-radius: 12px;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .player-management h4 {
+        margin-bottom: 10px;
+        color: #667eea;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        max-width: 400px;
+        width: 90%;
+    }
+
+    .modal-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #667eea;
+    }
+
+    .scoring-rules {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 15px;
+        margin: 15px 0;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .scoring-rules h4 {
+        color: #667eea;
+        margin-bottom: 10px;
+    }
+
+    .scoring-rules .positive { color: #27ae60; }
+    .scoring-rules .negative { color: #e74c3c; }
+
+    @media (max-width: 480px) {
+        .container { padding: 20px; }
+        h1 { font-size: 24px; }
+        .card-word { font-size: 36px; }
+        .timer-display { font-size: 60px; }
+        .privacy-text { font-size: 22px; }
+        .next-player-name { font-size: 28px; }
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <!-- Home Screen -->
+        <div id="homeScreen" class="screen active">
+            <h1>🎭 من المحتال؟</h1>
+            <p class="subtitle">اكتشف المحتال بين أصدقائك!</p>
+            <button class="btn" onclick="showScreen('sessionsScreen')">📂 جلساتي</button>
+            <button class="btn btn-secondary" onclick="showScreen('newSessionScreen')">➕ جلسة جديدة</button>
+            <button class="btn btn-success" onclick="showScreen('howToPlayScreen')">❓ كيف تلعب؟</button>
+        </div>
+
+```
+    <!-- Sessions List Screen -->
+    <div id="sessionsScreen" class="screen">
+        <h1>📂 جلساتي</h1>
+        <div id="sessionsList"></div>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 رجوع</button>
+    </div>
+
+    <!-- New Session Screen -->
+    <div id="newSessionScreen" class="screen">
+        <h1>➕ جلسة جديدة</h1>
+        <input type="text" id="sessionName" placeholder="اسم الجلسة (مثال: سهرة الأصدقاء)">
+        <h3 style="margin: 20px 0;">اللاعبين (الحد الأدنى: 3)</h3>
+        <input type="text" id="playerNameInput" placeholder="اسم اللاعب" onkeypress="if(event.key==='Enter') addPlayer()">
+        <button class="btn btn-success" onclick="addPlayer()">➕ إضافة لاعب</button>
+        <div id="playersList"></div>
+        <button class="btn" onclick="createSession()" id="createSessionBtn" disabled>🎮 إنشاء الجلسة</button>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 رجوع</button>
+    </div>
+
+    <!-- Session Detail Screen -->
+    <div id="sessionDetailScreen" class="screen">
+        <h1 id="sessionTitle"></h1>
+        
+        <div class="player-management">
+            <h4>👥 إدارة اللاعبين</h4>
+            <input type="text" id="newPlayerInput" placeholder="إضافة لاعب جديد" onkeypress="if(event.key==='Enter') addPlayerToSession()">
+            <button class="btn btn-success btn-small" onclick="addPlayerToSession()">➕ إضافة</button>
+        </div>
+        
+        <div id="sessionPlayers"></div>
+        
+        <h3 style="margin: 20px 0;">🎯 إعدادات اللعبة</h3>
+        
+        <!-- Kids Mode Toggle -->
+        <div class="toggle-container">
+            <span class="toggle-label">👶 وضع الأطفال (تلميحات مفصلة)</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="kidsMode">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <!-- Show Hints to Imposter Toggle -->
+        <div class="toggle-container">
+            <span class="toggle-label">💡 إظهار التلميح للمحتال</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="showHintToImposter" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <label>عدد المحتالين:</label>
+        <input type="number" id="imposterCount" min="1" value="1">
+        
+        <label>الفئة:</label>
+        <select id="categorySelect">
+            <optgroup label="🇸🇾 عربي وسوري">
+                <option value="syrian_food">🍲 أكلات سورية</option>
+                <option value="syrian_places">🏛️ أماكن سورية</option>
+                <option value="arab_culture">🎭 ثقافة عربية</option>
+                <option value="arab_celebrities">⭐ مشاهير عرب</option>
+                <option value="syrian_proverbs">📜 أمثال سورية وشامية</option>
+            </optgroup>
+            <optgroup label="🌍 عام">
+                <option value="animals">🦁 حيوانات</option>
+                <option value="food">🍕 أطعمة</option>
+                <option value="countries">🌍 دول</option>
+                <option value="movies">🎬 أفلام</option>
+                <option value="sports">⚽ رياضة</option>
+                <option value="professions">👨‍⚕️ مهن</option>
+                <option value="places">🏛️ أماكن</option>
+                <option value="objects">📱 أشياء</option>
+            </optgroup>
+            <optgroup label="🔤 English">
+                <option value="english_easy">🔤 English - Easy Words</option>
+                <option value="english_actions">🏃 English - Actions</option>
+                <option value="english_objects">📦 English - Objects</option>
+            </optgroup>
+        </select>
+        
+        <label>الوقت لكل لاعب (بالثواني):</label>
+        <select id="timerDuration">
+            <option value="0">بدون مؤقت</option>
+            <option value="30">30 ثانية</option>
+            <option value="60" selected>60 ثانية</option>
+            <option value="90">90 ثانية</option>
+            <option value="120">120 ثانية</option>
+        </select>
+        
+        <button class="btn" onclick="startGame()">▶️ بدء اللعبة</button>
+        <button class="btn btn-success" onclick="showGameHistory()">📜 تاريخ الألعاب</button>
+        <button class="btn btn-danger" onclick="deleteSession()">🗑️ حذف الجلسة</button>
+        <button class="btn btn-secondary" onclick="showScreen('sessionsScreen')">🔙 رجوع</button>
+    </div>
+
+    <!-- Game History Screen -->
+    <div id="gameHistoryScreen" class="screen">
+        <h1>📜 تاريخ الألعاب</h1>
+        <div id="gameHistoryList"></div>
+        <button class="btn btn-secondary" onclick="backToSession()">🔙 رجوع</button>
+    </div>
+
+    <!-- First Player Selection Screen -->
+    <div id="firstPlayerScreen" class="screen">
+        <div style="text-align: center; padding: 40px 20px;">
+            <h1 style="margin-bottom: 20px;">🎲 من سيبدأ اللعبة؟</h1>
+            <p style="font-size: 18px; color: #666; margin-bottom: 30px;">
+                اضغط على الزر لاختيار من سيأخذ الموبايل أولاً
+            </p>
+            <button class="btn btn-success" onclick="selectFirstPlayer()" id="selectFirstBtn" style="font-size: 24px; padding: 20px;">
+                🎯 اختيار عشوائي
+            </button>
+            <div id="firstPlayerResult" style="margin-top: 30px;"></div>
+        </div>
+    </div>
+
+    <!-- Card Reveal Screen -->
+    <div id="cardRevealScreen" class="screen">
+        <div class="card-reveal">
+            <h2 id="currentPlayerName" style="font-size: 28px; margin-bottom: 20px;"></h2>
+            <button class="btn btn-success" id="revealCardBtn" onclick="revealCard()">👁️ اضغط لكشف البطاقة</button>
+            <div id="cardContainer"></div>
+            <div id="nextPlayerBtn"></div>
+        </div>
+    </div>
+
+    <!-- Privacy Screen -->
+    <div id="privacyScreen" class="privacy-screen">
+        <div class="privacy-content">
+            <div class="privacy-icon">📱</div>
+            <div class="privacy-text">مرر الجهاز إلى:</div>
+            <div class="next-player-name" id="nextPlayerNameDisplay"></div>
+            <div class="privacy-text" style="font-size: 18px; opacity: 0.8; margin-top: 20px;">
+                🙈 الرجاء عدم النظر للشاشة!
+            </div>
+        </div>
+    </div>
+
+    <!-- Discussion Screen -->
+    <div id="discussionScreen" class="screen">
+        <h1>💬 وقت النقاش</h1>
+        <div class="timer-container" id="timerContainer"></div>
+        <button class="btn" onclick="proceedToVoting()">🗳️ الانتقال للتصويت</button>
+    </div>
+
+    <!-- Voting Screen -->
+    <div id="votingScreen" class="screen">
+        <h1>🗳️ التصويت</h1>
+        <div class="voting-turn">
+            <p style="font-size: 18px; color: #666; margin-bottom: 10px;">دور التصويت:</p>
+            <div class="current-voter" id="currentVoter"></div>
+            <div id="votingInstructions"></div>
+        </div>
+        <div id="voteGrid" class="vote-grid"></div>
+        <button class="btn" id="submitVoteBtn" onclick="submitCurrentVote()">✅ تأكيد التصويت</button>
+    </div>
+
+    <!-- Suspense Screen -->
+    <div id="suspenseScreen" class="screen">
+        <div class="suspense-container">
+            <h1>🎭 لحظة الحقيقة...</h1>
+            <div class="suspense-text" id="suspenseText">من هو المحتال؟</div>
+            <button class="btn btn-danger" id="revealBtn" onclick="revealImposter()" style="font-size: 24px; padding: 20px;">
+                🔍 كشف المحتال!
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="resultsScreen" class="screen">
+        <div class="results-container">
+            <h1>🏆 نتائج اللعبة</h1>
+            <div id="resultsContent"></div>
+            <button class="btn" onclick="playAgain()">🔄 لعبة جديدة</button>
+            <button class="btn btn-secondary" onclick="endSession()">🏁 إنهاء الجلسة</button>
+        </div>
+    </div>
+
+    <!-- How to Play Screen -->
+    <div id="howToPlayScreen" class="screen">
+        <h1>❓ كيف تلعب؟</h1>
+        <div style="text-align: right; line-height: 2;">
+            <h3>📋 قواعد اللعبة:</h3>
+            <p>1️⃣ اختر عدد المحتالين (1 أو أكثر)</p>
+            <p>2️⃣ كل لاعب يكشف بطاقته بسرية</p>
+            <p>3️⃣ اللاعبون العاديون يرون نفس الكلمة</p>
+            <p>4️⃣ المحتالون يرون التلميح فقط (أو لا شيء)</p>
+            <p>5️⃣ ابدأوا النقاش وحاولوا كشف المحتال</p>
+            <p>6️⃣ كل لاعب يصوت على المشتبه به</p>
+            <p>7️⃣ كشف المحتال في نهاية التصويت!</p>
+            
+            <div class="scoring-rules">
+                <h4>🎯 نظام النقاط:</h4>
+                <p><strong>للمحتال:</strong></p>
+                <p class="positive">• لم يصوت عليه أحد: +30 نقطة</p>
+                <p class="positive">• صوت عليه أقل من النصف: +20 نقطة</p>
+                <p class="negative">• صوت عليه النصف أو أكثر: 0 نقطة</p>
+                <br>
+                <p><strong>للاعب العادي:</strong></p>
+                <p class="positive">• صوت على محتال صحيح: +10 نقاط</p>
+                <p class="negative">• صوت على بريء: -5 نقاط</p>
+                <br>
+                <p><strong>ملاحظة:</strong> المحتال يصوت على شخص واحد فقط (لتمويه نفسه)</p>
+            </div>
+        </div>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 رجوع</button>
+    </div>
+</div>
+
+<!-- Edit Player Modal -->
+<div id="editPlayerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title">✏️ تعديل اسم اللاعب</div>
+        <input type="text" id="editPlayerInput" placeholder="الاسم الجديد">
+        <input type="hidden" id="editPlayerId">
+        <button class="btn btn-success" onclick="savePlayerEdit()">💾 حفظ</button>
+        <button class="btn btn-secondary" onclick="closeEditModal()">❌ إلغاء</button>
+    </div>
+</div>
+
+<div id="achievementContainer"></div>
+
+<script>
+    // ===============================
+    // AUDIO SYSTEM
+    // ===============================
+    const AudioManager = {
+        audioContext: null,
+        
+        init() {
+            try {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            } catch(e) {
+                console.log('Audio not supported');
+            }
+        },
+        
+        playAlert() {
+            try {
+                this.init();
+                if (!this.audioContext) return;
+                const ctx = this.audioContext;
+                const now = ctx.currentTime;
+                const oscillator = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                oscillator.frequency.value = 880;
+                oscillator.type = 'square';
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.5, now + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                oscillator.start(now);
+                oscillator.stop(now + 0.3);
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            } catch(e) {}
+        },
+        
+        playSuccess() {
+            try {
+                this.init();
+                if (!this.audioContext) return;
+                const ctx = this.audioContext;
+                const now = ctx.currentTime;
+                [0, 0.15, 0.3].forEach((delay, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = 523.25 + (i * 100);
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0, now + delay);
+                    gain.gain.linearRampToValueAtTime(0.2, now + delay + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.15);
+                    osc.start(now + delay);
+                    osc.stop(now + delay + 0.15);
+                });
+                if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+            } catch(e) {}
+        },
+        
+        playDrama() {
+            try {
+                this.init();
+                if (!this.audioContext) return;
+                const ctx = this.audioContext;
+                const now = ctx.currentTime;
+                const oscillator = ctx.createOscillator();
+                const gainNode = ctx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                oscillator.frequency.setValueAtTime(200, now);
+                oscillator.frequency.exponentialRampToValueAtTime(100, now + 0.8);
+                oscillator.type = 'sawtooth';
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.3, now + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                oscillator.start(now);
+                oscillator.stop(now + 0.8);
+                if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+            } catch(e) {}
+        }
+    };
+
+    // ===============================
+    // CONFETTI
+    // ===============================
+    const Confetti = {
+        create() {
+            const colors = ['#667eea', '#764ba2', '#4facfe', '#00f2fe', '#ffeaa7', '#fdcb6e'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.position = 'fixed';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 50);
+            }
+        }
+    };
+
+    // ===============================
+    // WORD DATABASE - UPDATED WITH GENERAL HINTS
+    // ===============================
+    const WORDS = {
+        // Syrian Food
+        syrian_food: [
+            { word: "كبة", hint: "شيء يؤكل", kidsHint: "أكلة مقرمشة فيها لحمة وبرغل شكلها بيضاوي" },
+            { word: "فتة", hint: "شيء يؤكل", kidsHint: "أكلة فيها خبز وحمص ولبن" },
+            { word: "شاورما", hint: "شيء يؤكل", kidsHint: "لحمة مشوية على سيخ كبير نضعها في الخبز" },
+            { word: "فلافل", hint: "شيء يؤكل", kidsHint: "كرات مقلية خضراء من الحمص" },
+            { word: "تبولة", hint: "شيء يؤكل", kidsHint: "سلطة خضراء فيها بقدونس وبرغل" },
+            { word: "فتوش", hint: "شيء يؤكل", kidsHint: "سلطة فيها خبز محمص وخضار كثير" },
+            { word: "ورق عنب", hint: "شيء يؤكل", kidsHint: "أوراق خضراء ملفوفة فيها رز ولحمة" },
+            { word: "محاشي", hint: "شيء يؤكل", kidsHint: "كوسا أو باذنجان محشي بالرز واللحمة" },
+            { word: "مناقيش", hint: "شيء يؤكل", kidsHint: "خبز مع زعتر وزيت ناكله في الصباح" },
+            { word: "حمص", hint: "شيء يؤكل", kidsHint: "معجون كريمي نأكله مع الخبز" },
+            { word: "متبل", hint: "شيء يؤكل", kidsHint: "معجون من الباذنجان المشوي" },
+            { word: "لبنة", hint: "شيء يؤكل", kidsHint: "لبن كثيف أبيض ناكله مع زيت الزيتون" },
+            { word: "شيش طاووق", hint: "شيء يؤكل", kidsHint: "قطع دجاج مشوية على السيخ" },
+            { word: "مجدرة", hint: "شيء يؤكل", kidsHint: "أكلة من العدس والبرغل والبصل المقلي" },
+            { word: "كنافة", hint: "شيء يؤكل", kidsHint: "حلوى برتقالية فيها جبنة وقطر حلو" },
+            { word: "بقلاوة", hint: "شيء يؤكل", kidsHint: "حلوى طبقات رقيقة فيها فستق" },
+            { word: "معمول", hint: "شيء يؤكل", kidsHint: "كعك محشي بالتمر أو الجوز ناكله في العيد" },
+            { word: "قطايف", hint: "شيء يؤكل", kidsHint: "حلوى رمضان محشية بالقشطة أو الجوز" },
+            { word: "عوامة", hint: "شيء يؤكل", kidsHint: "كرات صغيرة مقلية مع القطر" },
+            { word: "مهلبية", hint: "شيء يؤكل", kidsHint: "حلوى بيضاء كريمية باردة" }
+        ],
+        
+        // Syrian Places
+        syrian_places: [
+            { word: "الجامع الأموي", hint: "مكان في سوريا", kidsHint: "أقدم وأكبر جامع في دمشق القديمة" },
+            { word: "سوق الحميدية", hint: "مكان في سوريا", kidsHint: "سوق مسقوف كبير في دمشق فيه محلات كثيرة" },
+            { word: "قلعة حلب", hint: "مكان في سوريا", kidsHint: "قلعة كبيرة قديمة على تلة في حلب" },
+            { word: "تدمر", hint: "مكان في سوريا", kidsHint: "مدينة أثرية قديمة في الصحراء" },
+            { word: "حلب", hint: "مكان في سوريا", kidsHint: "أكبر مدينة في سوريا" },
+            { word: "اللاذقية", hint: "مكان في سوريا", kidsHint: "مدينة على البحر فيها ميناء" },
+            { word: "حمص", hint: "مكان في سوريا", kidsHint: "مدينة في وسط سوريا" },
+            { word: "حماة", hint: "مكان في سوريا", kidsHint: "مدينة فيها نواعير على نهر العاصي" },
+            { word: "جبل قاسيون", hint: "مكان في سوريا", kidsHint: "جبل كبير يطل على مدينة دمشق" },
+            { word: "الغوطة", hint: "مكان في سوريا", kidsHint: "منطقة خضراء فيها بساتين حول دمشق" },
+            { word: "باب توما", hint: "مكان في سوريا", kidsHint: "حي قديم في دمشق" },
+            { word: "المرجة", hint: "مكان في سوريا", kidsHint: "ساحة كبيرة في وسط دمشق" },
+            { word: "كسب", hint: "مكان في سوريا", kidsHint: "قرية جبلية خضراء فيها غابات" },
+            { word: "صيدنايا", hint: "مكان في سوريا", kidsHint: "قرية فيها دير مشهور قديم" },
+            { word: "معلولا", hint: "مكان في سوريا", kidsHint: "قرية قديمة ناسها يتكلمون لغة قديمة" }
+        ],
+        
+        // Arab Culture
+        arab_culture: [
+            { word: "عود", hint: "شيء يُستخدم", kidsHint: "آلة موسيقية عربية بأوتار" },
+            { word: "طربوش", hint: "شيء يُلبس", kidsHint: "قبعة حمراء كان يلبسها العرب قديماً" },
+            { word: "كوفية", hint: "شيء يُلبس", kidsHint: "قماش يوضع على الرأس أبيض وأسود" },
+            { word: "جلابية", hint: "شيء يُلبس", kidsHint: "ثوب طويل فضفاض يلبسه الرجال" },
+            { word: "دربكة", hint: "شيء يُستخدم", kidsHint: "طبلة صغيرة نضرب عليها بالأيدي" },
+            { word: "ناي", hint: "شيء يُستخدم", kidsHint: "آلة نفخ طويلة رفيعة صوتها حزين" },
+            { word: "دبكة", hint: "نشاط جماعي", kidsHint: "رقصة جماعية نمسك أيدي بعض ونضرب بالأرجل" },
+            { word: "حناء", hint: "شيء يُستخدم", kidsHint: "صبغة برتقالية نرسم بها على اليد" },
+            { word: "بخور", hint: "شيء يُستخدم", kidsHint: "عود نحرقه يطلع دخان ريحته حلوة" },
+            { word: "دلة قهوة", hint: "شيء يُستخدم", kidsHint: "إبريق معدني نصب منه القهوة" },
+            { word: "سبحة", hint: "شيء يُستخدم", kidsHint: "حبات مربوطة نعدها ونذكر الله" },
+            { word: "خيمة", hint: "مكان", kidsHint: "بيت من القماش كان يسكنه البدو" },
+            { word: "فانوس", hint: "شيء يُستخدم", kidsHint: "مصباح نضيئه في رمضان" },
+            { word: "نخلة", hint: "شيء في الطبيعة", kidsHint: "شجرة طويلة فيها تمر" },
+            { word: "جمل", hint: "كائن حي", kidsHint: "سفينة الصحراء حيوان له سنام" }
+        ],
+        
+        // Arab Celebrities
+        arab_celebrities: [
+            { word: "فيروز", hint: "شخص مشهور", kidsHint: "مطربة لبنانية صوتها جميل تغني للصباح" },
+            { word: "أم كلثوم", hint: "شخص مشهور", kidsHint: "مطربة مصرية مشهورة جداً" },
+            { word: "محمد عبده", hint: "شخص مشهور", kidsHint: "مطرب سعودي كبير يسمونه فنان العرب" },
+            { word: "كاظم الساهر", hint: "شخص مشهور", kidsHint: "مطرب عراقي يغني قصائد شعرية" },
+            { word: "نانسي عجرم", hint: "شخص مشهور", kidsHint: "مطربة لبنانية تغني أغاني راقصة" },
+            { word: "عمرو دياب", hint: "شخص مشهور", kidsHint: "مطرب مصري يغني أغاني رومانسية" },
+            { word: "صباح فخري", hint: "شخص مشهور", kidsHint: "مطرب سوري كبير يغني الطرب الأصيل" },
+            { word: "عادل إمام", hint: "شخص مشهور", kidsHint: "ممثل مصري كوميدي يضحك الناس" },
+            { word: "دريد لحام", hint: "شخص مشهور", kidsHint: "ممثل سوري كوميدي اسمه غوار" },
+            { word: "محمد صلاح", hint: "شخص مشهور", kidsHint: "لاعب كرة قدم مصري في ليفربول" },
+            { word: "نزار قباني", hint: "شخص مشهور", kidsHint: "شاعر سوري يكتب شعر عن الحب" },
+            { word: "أسمهان", hint: "شخص مشهور", kidsHint: "مطربة سورية صوتها قوي جداً" }
+        ],
+        
+        // Syrian Proverbs - 35+ proverbs
+        syrian_proverbs: [
+            { word: "اللي ما بيعرف الصقر بيشويه", hint: "قول شعبي", kidsHint: "مثل عن شخص لا يعرف قيمة الأشياء" },
+            { word: "القرد بعين أمه غزال", hint: "قول شعبي", kidsHint: "مثل عن حب الأم لأولادها مهما كانوا" },
+            { word: "اللي بيته من زجاج ما يرمي الناس بحجر", hint: "قول شعبي", kidsHint: "مثل عن عدم انتقاد الآخرين" },
+            { word: "الصبر مفتاح الفرج", hint: "قول شعبي", kidsHint: "مثل عن أهمية الصبر" },
+            { word: "يد واحدة ما بتصفق", hint: "قول شعبي", kidsHint: "مثل عن أهمية التعاون" },
+            { word: "الحركة بركة", hint: "قول شعبي", kidsHint: "مثل عن فائدة العمل والنشاط" },
+            { word: "العين بصيرة واليد قصيرة", hint: "قول شعبي", kidsHint: "مثل عن رؤية شيء ولا نستطيع الوصول له" },
+            { word: "على قد لحافك مد رجليك", hint: "قول شعبي", kidsHint: "مثل عن العيش حسب الإمكانيات" },
+            { word: "ابن الوز عوام", hint: "قول شعبي", kidsHint: "مثل عن وراثة الصفات من الأهل" },
+            { word: "الطيور على أشكالها تقع", hint: "قول شعبي", kidsHint: "مثل عن تجمع المتشابهين" },
+            { word: "اللي فات مات", hint: "قول شعبي", kidsHint: "مثل عن نسيان الماضي" },
+            { word: "درهم وقاية خير من قنطار علاج", hint: "قول شعبي", kidsHint: "مثل عن أهمية الحذر والوقاية" },
+            { word: "من جد وجد", hint: "قول شعبي", kidsHint: "مثل عن أن الجهد يؤدي للنجاح" },
+            { word: "الجار قبل الدار", hint: "قول شعبي", kidsHint: "مثل عن أهمية الجار الجيد" },
+            { word: "رب أخ لك لم تلده أمك", hint: "قول شعبي", kidsHint: "مثل عن الصداقة القوية" },
+            { word: "الكلاب تنبح والقافلة تسير", hint: "قول شعبي", kidsHint: "مثل عن تجاهل الانتقادات" },
+            { word: "مو كل مرة بتسلم الجرة", hint: "قول شعبي", kidsHint: "مثل عن أن الحظ لا يدوم" },
+            { word: "الفلوس بتجيب عروس", hint: "قول شعبي", kidsHint: "مثل عن أهمية المال" },
+            { word: "بعد ما شاب ودوه الكتاب", hint: "قول شعبي", kidsHint: "مثل عن التعلم المتأخر" },
+            { word: "جوز الحرة مغطى", hint: "قول شعبي", kidsHint: "مثل عن المرأة الشريفة" },
+            { word: "اطعم الفم تستحي العين", hint: "قول شعبي", kidsHint: "مثل عن الكرم والإحسان" },
+            { word: "الحيطان إلها ودان", hint: "قول شعبي", kidsHint: "مثل عن الحذر في الكلام" },
+            { word: "خبي قرشك الأبيض ليومك الأسود", hint: "قول شعبي", kidsHint: "مثل عن التوفير للمستقبل" },
+            { word: "اللي بيطلع من داره بيقل مقداره", hint: "قول شعبي", kidsHint: "مثل عن أهمية البقاء في الوطن" },
+            { word: "ضربني وبكى سبقني واشتكى", hint: "قول شعبي", kidsHint: "مثل عن الظالم الذي يدعي الظلم" },
+            { word: "اللي ما بيحسب حساب رفاقو ما بيجي معاهم", hint: "قول شعبي", kidsHint: "مثل عن احترام الآخرين" },
+            { word: "الباب اللي بيجيك منو الريح سدو واستريح", hint: "قول شعبي", kidsHint: "مثل عن تجنب المشاكل" },
+            { word: "اللي بيزرع ريح بيحصد عاصفة", hint: "قول شعبي", kidsHint: "مثل عن عواقب الأفعال السيئة" },
+            { word: "عصفور بالأيد ولا عشرة عالشجرة", hint: "قول شعبي", kidsHint: "مثل عن قيمة المضمون" },
+            { word: "اللي بياخد من غير ملتو بيموت بعلتو", hint: "قول شعبي", kidsHint: "مثل عن الحرام" },
+            { word: "المكتوب باين من عنوانو", hint: "قول شعبي", kidsHint: "مثل عن وضوح الأمور من البداية" },
+            { word: "كتر السلام بيقلل المعرفة", hint: "قول شعبي", kidsHint: "مثل عن الاعتدال في العلاقات" },
+            { word: "اللي بيحكي كتير بيغلط كتير", hint: "قول شعبي", kidsHint: "مثل عن الصمت والحكمة" },
+            { word: "الدم ما بيصير مي", hint: "قول شعبي", kidsHint: "مثل عن قوة صلة القرابة" },
+            { word: "المي بتكذب الغطاس", hint: "قول شعبي", kidsHint: "مثل عن كشف الحقيقة" },
+            { word: "اللي بيجرب المجرب عقلو مخرب", hint: "قول شعبي", kidsHint: "مثل عن التعلم من التجارب" },
+            { word: "القناعة كنز لا يفنى", hint: "قول شعبي", kidsHint: "مثل عن الرضا بما قسمه الله" },
+            { word: "العلم نور", hint: "قول شعبي", kidsHint: "مثل عن أهمية التعليم" }
+        ],
+        
+        // Animals
+        animals: [
+            { word: "أسد", hint: "كائن حي", kidsHint: "حيوان كبير وقوي يسمى ملك الغابة" },
+            { word: "زرافة", hint: "كائن حي", kidsHint: "حيوان طويل جداً له رقبة طويلة" },
+            { word: "فيل", hint: "كائن حي", kidsHint: "حيوان ضخم له خرطوم طويل وأذنين كبيرتين" },
+            { word: "قرد", hint: "كائن حي", kidsHint: "حيوان يحب الموز ويتسلق الأشجار" },
+            { word: "دب", hint: "كائن حي", kidsHint: "حيوان كبير وقوي يحب العسل" },
+            { word: "نمر", hint: "كائن حي", kidsHint: "حيوان سريع له خطوط سوداء وبرتقالية" },
+            { word: "حوت", hint: "كائن حي", kidsHint: "أكبر حيوان في العالم يعيش في البحر" },
+            { word: "دولفين", hint: "كائن حي", kidsHint: "حيوان ذكي يعيش في البحر ويقفز" },
+            { word: "بطريق", hint: "كائن حي", kidsHint: "طائر لا يطير يعيش في مكان بارد" },
+            { word: "كنغر", hint: "كائن حي", kidsHint: "حيوان يقفز ويحمل أطفاله في جيب" },
+            { word: "ثعلب", hint: "كائن حي", kidsHint: "حيوان ماكر برتقالي له ذيل كثيف" },
+            { word: "ذئب", hint: "كائن حي", kidsHint: "حيوان يشبه الكلب يعوي في الليل" },
+            { word: "غزال", hint: "كائن حي", kidsHint: "حيوان جميل ورشيق يركض بسرعة" },
+            { word: "سلحفاة", hint: "كائن حي", kidsHint: "حيوان بطيء يحمل بيته على ظهره" },
+            { word: "أخطبوط", hint: "كائن حي", kidsHint: "حيوان بحري له ثماني أذرع" }
+        ],
+        
+        // Food
+        food: [
+            { word: "بيتزا", hint: "شيء يؤكل", kidsHint: "طعام دائري فيه جبن وطماطم" },
+            { word: "برجر", hint: "شيء يؤكل", kidsHint: "لحم في خبز دائري مع خس وطماطم" },
+            { word: "باستا", hint: "شيء يؤكل", kidsHint: "معكرونة مع صوص أحمر أو أبيض" },
+            { word: "آيس كريم", hint: "شيء يؤكل", kidsHint: "حلوى باردة جداً تذوب بسرعة" },
+            { word: "كيك", hint: "شيء يؤكل", kidsHint: "حلوى ناكلها في أعياد الميلاد" },
+            { word: "فشار", hint: "شيء يؤكل", kidsHint: "ذرة تنفجر في الحرارة ناكلها في السينما" },
+            { word: "شوكولاتة", hint: "شيء يؤكل", kidsHint: "حلوى لونها بني حلوة جداً" },
+            { word: "موز", hint: "شيء يؤكل", kidsHint: "فاكهة صفراء طويلة القرود تحبها" },
+            { word: "تفاح", hint: "شيء يؤكل", kidsHint: "فاكهة دائرية حمراء أو خضراء" },
+            { word: "بطاطس", hint: "شيء يؤكل", kidsHint: "نقليها ونأكلها مع الكاتشب" },
+            { word: "سوشي", hint: "شيء يؤكل", kidsHint: "أكل ياباني فيه رز وسمك" },
+            { word: "دونات", hint: "شيء يؤكل", kidsHint: "حلوى دائرية فيها ثقب في الوسط" },
+            { word: "بانكيك", hint: "شيء يؤكل", kidsHint: "فطيرة مسطحة ناكلها في الصباح" },
+            { word: "ساندويش", hint: "شيء يؤكل", kidsHint: "خبز فيه جبن أو لحم أو خضار" }
+        ],
+        
+        // Countries
+        countries: [
+            { word: "سوريا", hint: "مكان على الخريطة", kidsHint: "دولة عربية فيها دمشق وحلب" },
+            { word: "لبنان", hint: "مكان على الخريطة", kidsHint: "دولة صغيرة جميلة فيها جبال وبحر" },
+            { word: "مصر", hint: "مكان على الخريطة", kidsHint: "دولة فيها أهرامات وأبو الهول" },
+            { word: "السعودية", hint: "مكان على الخريطة", kidsHint: "دولة فيها الكعبة المشرفة" },
+            { word: "الإمارات", hint: "مكان على الخريطة", kidsHint: "دولة فيها برج خليفة الأطول" },
+            { word: "كندا", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة جداً فيها ثلج كثير" },
+            { word: "اليابان", hint: "مكان على الخريطة", kidsHint: "دولة فيها أنمي وسوشي" },
+            { word: "فرنسا", hint: "مكان على الخريطة", kidsHint: "دولة فيها برج إيفل" },
+            { word: "إيطاليا", hint: "مكان على الخريطة", kidsHint: "دولة شكلها مثل الحذاء" },
+            { word: "البرازيل", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة ناسها يحبون كرة القدم" },
+            { word: "استراليا", hint: "مكان على الخريطة", kidsHint: "دولة بعيدة فيها كنغر وكوالا" },
+            { word: "الصين", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة جداً فيها سور طويل" },
+            { word: "أمريكا", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة فيها تمثال الحرية" }
+        ],
+        
+        // Movies
+        movies: [
+            { word: "الأسد الملك", hint: "عمل فني", kidsHint: "فيلم كرتون عن أسد صغير اسمه سيمبا" },
+            { word: "فروزن", hint: "عمل فني", kidsHint: "فيلم عن أميرة لها قوة الثلج اسمها إلسا" },
+            { word: "توي ستوري", hint: "عمل فني", kidsHint: "فيلم عن لعب أطفال تتحرك وتتكلم" },
+            { word: "العثور على نيمو", hint: "عمل فني", kidsHint: "فيلم عن سمكة برتقالية صغيرة ضاعت" },
+            { word: "هاري بوتر", hint: "عمل فني", kidsHint: "فيلم عن ولد ساحر يتعلم السحر" },
+            { word: "سبايدرمان", hint: "عمل فني", kidsHint: "فيلم عن بطل يطلع خيوط مثل العنكبوت" },
+            { word: "باتمان", hint: "عمل فني", kidsHint: "فيلم عن بطل يلبس أسود" },
+            { word: "علاء الدين", hint: "عمل فني", kidsHint: "فيلم عن ولد يلاقي مصباح سحري فيه جني" },
+            { word: "موانا", hint: "عمل فني", kidsHint: "فيلم عن بنت شجاعة تبحر في البحر" },
+            { word: "رابونزل", hint: "عمل فني", kidsHint: "فيلم عن أميرة شعرها طويل جداً" },
+            { word: "كوكو", hint: "عمل فني", kidsHint: "فيلم عن ولد يحب الموسيقى" },
+            { word: "زوتوبيا", hint: "عمل فني", kidsHint: "فيلم عن أرنبة تصير شرطية" }
+        ],
+        
+        // Sports
+        sports: [
+            { word: "كرة القدم", hint: "نشاط رياضي", kidsHint: "رياضة نركل فيها الكرة بالقدم" },
+            { word: "كرة السلة", hint: "نشاط رياضي", kidsHint: "رياضة نرمي فيها الكرة في سلة عالية" },
+            { word: "السباحة", hint: "نشاط رياضي", kidsHint: "رياضة نسبح فيها في الماء" },
+            { word: "الجري", hint: "نشاط رياضي", kidsHint: "رياضة نركض فيها بسرعة" },
+            { word: "التنس", hint: "نشاط رياضي", kidsHint: "رياضة نضرب فيها كرة صغيرة بمضرب" },
+            { word: "الملاكمة", hint: "نشاط رياضي", kidsHint: "رياضة نلبس فيها قفازات ونلكم" },
+            { word: "الجمباز", hint: "نشاط رياضي", kidsHint: "رياضة نعمل فيها حركات صعبة وشقلبات" },
+            { word: "ركوب الدراجات", hint: "نشاط رياضي", kidsHint: "رياضة نركب فيها دراجة ونسابق" },
+            { word: "التزلج", hint: "نشاط رياضي", kidsHint: "رياضة ننزلق فيها على الثلج" },
+            { word: "الكاراتيه", hint: "نشاط رياضي", kidsHint: "رياضة قتالية نتعلم فيها ندافع عن نفسنا" }
+        ],
+        
+        // Professions
+        professions: [
+            { word: "طبيب", hint: "عمل أو وظيفة", kidsHint: "شخص يعالج المرضى" },
+            { word: "معلم", hint: "عمل أو وظيفة", kidsHint: "شخص يعلم الأطفال في المدرسة" },
+            { word: "طيار", hint: "عمل أو وظيفة", kidsHint: "شخص يقود الطائرة في السماء" },
+            { word: "رجل إطفاء", hint: "عمل أو وظيفة", kidsHint: "شخص شجاع يطفئ الحريق" },
+            { word: "طباخ", hint: "عمل أو وظيفة", kidsHint: "شخص يطبخ الأكل في المطعم" },
+            { word: "مزارع", hint: "عمل أو وظيفة", kidsHint: "شخص يزرع الخضار والفواكه" },
+            { word: "بناء", hint: "عمل أو وظيفة", kidsHint: "شخص يبني البيوت والمباني" },
+            { word: "مهندس", hint: "عمل أو وظيفة", kidsHint: "شخص يصمم ويبني الأشياء" },
+            { word: "شرطي", hint: "عمل أو وظيفة", kidsHint: "شخص يحمي الناس ويمسك اللصوص" },
+            { word: "صيدلي", hint: "عمل أو وظيفة", kidsHint: "شخص يعطينا الدواء من الصيدلية" },
+            { word: "رائد فضاء", hint: "عمل أو وظيفة", kidsHint: "شخص يسافر للفضاء ويرى الكواكب" }
+        ],
+        
+        // Places
+        places: [
+            { word: "مدرسة", hint: "مكان يُذهب إليه", kidsHint: "مكان نتعلم فيه ونلعب مع الأصدقاء" },
+            { word: "مستشفى", hint: "مكان يُذهب إليه", kidsHint: "مكان نروح له لما نكون مرضى" },
+            { word: "حديقة", hint: "مكان يُذهب إليه", kidsHint: "مكان أخضر فيه أشجار وأزهار نلعب فيه" },
+            { word: "شاطئ", hint: "مكان يُذهب إليه", kidsHint: "مكان فيه رمل وماء البحر" },
+            { word: "مطار", hint: "مكان يُذهب إليه", kidsHint: "مكان تطير منه الطائرات" },
+            { word: "حديقة حيوانات", hint: "مكان يُذهب إليه", kidsHint: "مكان نشوف فيه حيوانات كثيرة" },
+            { word: "سوبر ماركت", hint: "مكان يُذهب إليه", kidsHint: "مكان كبير نشتري منه الأكل" },
+            { word: "مكتبة", hint: "مكان يُذهب إليه", kidsHint: "مكان فيه كتب كثيرة نقرأها" },
+            { word: "ملعب", hint: "مكان يُذهب إليه", kidsHint: "مكان نلعب فيه كرة القدم" },
+            { word: "سينما", hint: "مكان يُذهب إليه", kidsHint: "مكان نشاهد فيه أفلام على شاشة كبيرة" },
+            { word: "مطعم", hint: "مكان يُذهب إليه", kidsHint: "مكان نأكل فيه أكل لذيذ" }
+        ],
+        
+        // Objects
+        objects: [
+            { word: "هاتف", hint: "شيء يُستخدم", kidsHint: "جهاز نتكلم فيه مع الناس ونلعب ألعاب" },
+            { word: "سيارة", hint: "شيء يُستخدم", kidsHint: "شيء يوصلنا من مكان لمكان على العجلات" },
+            { word: "ساعة", hint: "شيء يُستخدم", kidsHint: "شيء نشوف فيه الوقت نلبسه في اليد" },
+            { word: "كتاب", hint: "شيء يُستخدم", kidsHint: "شيء فيه صفحات وقصص نقرأها" },
+            { word: "قلم", hint: "شيء يُستخدم", kidsHint: "شيء نكتب ونرسم فيه" },
+            { word: "كرسي", hint: "شيء يُستخدم", kidsHint: "شيء نجلس عليه" },
+            { word: "طاولة", hint: "شيء يُستخدم", kidsHint: "شيء نضع عليه الأكل أو نكتب عليه" },
+            { word: "نظارة", hint: "شيء يُستخدم", kidsHint: "شيء نلبسه على العيون لنشوف أحسن" },
+            { word: "مظلة", hint: "شيء يُستخدم", kidsHint: "شيء نفتحه لما تمطر" },
+            { word: "تلفزيون", hint: "شيء يُستخدم", kidsHint: "شاشة كبيرة نشاهد فيها الكرتون" },
+            { word: "ثلاجة", hint: "شيء يُستخدم", kidsHint: "شيء كبير يحفظ الأكل بارد" },
+            { word: "مفتاح", hint: "شيء يُستخدم", kidsHint: "شيء صغير نفتح فيه الأبواب" }
+        ],
+        
+        // English Easy
+        english_easy: [
+            { word: "Cat", hint: "Living thing", kidsHint: "A small furry pet that says meow" },
+            { word: "Dog", hint: "Living thing", kidsHint: "A friendly pet that barks" },
+            { word: "Sun", hint: "Something in nature", kidsHint: "The big bright ball in the sky" },
+            { word: "Moon", hint: "Something in nature", kidsHint: "The light in the night sky" },
+            { word: "Tree", hint: "Something in nature", kidsHint: "A tall plant with leaves" },
+            { word: "House", hint: "A place", kidsHint: "A building where families live" },
+            { word: "Car", hint: "Something used", kidsHint: "A vehicle with four wheels" },
+            { word: "Ball", hint: "Something used", kidsHint: "A round thing we throw" },
+            { word: "Book", hint: "Something used", kidsHint: "Pages with stories to read" },
+            { word: "Apple", hint: "Something eaten", kidsHint: "A red or green round fruit" },
+            { word: "Banana", hint: "Something eaten", kidsHint: "A long yellow fruit" },
+            { word: "Water", hint: "Something consumed", kidsHint: "Clear liquid we drink" },
+            { word: "Bird", hint: "Living thing", kidsHint: "An animal with wings that can fly" },
+            { word: "Fish", hint: "Living thing", kidsHint: "An animal that swims in water" },
+            { word: "Flower", hint: "Something in nature", kidsHint: "A colorful plant that smells nice" }
+        ],
+        
+        // English Actions
+        english_actions: [
+            { word: "Running", hint: "An action", kidsHint: "Moving your legs fast" },
+            { word: "Jumping", hint: "An action", kidsHint: "Going up off the ground" },
+            { word: "Swimming", hint: "An action", kidsHint: "Moving through water" },
+            { word: "Dancing", hint: "An action", kidsHint: "Moving your body to music" },
+            { word: "Singing", hint: "An action", kidsHint: "Making music with your voice" },
+            { word: "Reading", hint: "An action", kidsHint: "Looking at words in a book" },
+            { word: "Writing", hint: "An action", kidsHint: "Making letters with a pen" },
+            { word: "Drawing", hint: "An action", kidsHint: "Making pictures" },
+            { word: "Cooking", hint: "An action", kidsHint: "Making food to eat" },
+            { word: "Sleeping", hint: "An action", kidsHint: "Closing eyes and resting" },
+            { word: "Walking", hint: "An action", kidsHint: "Moving by putting one foot in front of the other" },
+            { word: "Laughing", hint: "An action", kidsHint: "Making happy sounds when something is funny" }
+        ],
+        
+        // English Objects
+        english_objects: [
+            { word: "Umbrella", hint: "Something used", kidsHint: "Opens up to keep you dry when it rains" },
+            { word: "Backpack", hint: "Something used", kidsHint: "A bag you wear on your back" },
+            { word: "Pillow", hint: "Something used", kidsHint: "Soft thing you put your head on" },
+            { word: "Blanket", hint: "Something used", kidsHint: "Keeps you warm when you sleep" },
+            { word: "Mirror", hint: "Something used", kidsHint: "Shows you what you look like" },
+            { word: "Pencil", hint: "Something used", kidsHint: "Yellow stick you write with" },
+            { word: "Television", hint: "Something used", kidsHint: "Screen where you watch shows" },
+            { word: "Camera", hint: "Something used", kidsHint: "Takes pictures" },
+            { word: "Bicycle", hint: "Something used", kidsHint: "Two wheels you pedal" },
+            { word: "Balloon", hint: "Something used", kidsHint: "Filled with air, floats up" },
+            { word: "Candle", hint: "Something used", kidsHint: "Has a flame that gives light" },
+            { word: "Key", hint: "Something used", kidsHint: "Small metal thing that opens locks" }
+        ]
+    };
+
+    // ===============================
+    // GAME STATE
+    // ===============================
+    let currentSession = null;
+    let currentGame = null;
+    let players = [];
+    let currentPlayerIndex = 0;
+    let currentVoterIndex = 0;
+    let allVotes = [];
+    let currentVotes = [];
+    let timerInterval = null;
+    let selectedFirstPlayerIndex = -1;
+
+    // ===============================
+    // LOCAL STORAGE
+    // ===============================
+    const Storage = {
+        getSessions() {
+            try {
+                const sessions = localStorage.getItem('imposterSessions');
+                return sessions ? JSON.parse(sessions) : [];
+            } catch(e) {
+                return [];
+            }
+        },
+        
+        saveSession(session) {
+            try {
+                const sessions = this.getSessions();
+                const index = sessions.findIndex(s => s.id === session.id);
+                if (index >= 0) {
+                    sessions[index] = session;
+                } else {
+                    sessions.push(session);
+                }
+                localStorage.setItem('imposterSessions', JSON.stringify(sessions));
+            } catch(e) {
+                console.log('Storage error');
+            }
+        },
+        
+        deleteSession(sessionId) {
+            try {
+                const sessions = this.getSessions();
+                const filtered = sessions.filter(s => s.id !== sessionId);
+                localStorage.setItem('imposterSessions', JSON.stringify(filtered));
+            } catch(e) {}
+        },
+        
+        getSession(sessionId) {
+            const sessions = this.getSessions();
+            return sessions.find(s => s.id === sessionId);
+        }
+    };
+
+    // ===============================
+    // DATE FORMATTER - GREGORIAN
+    // ===============================
+    function formatDate(dateString) {
+        try {
+            const date = new Date(dateString);
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            const hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${day}/${month}/${year} - ${hours}:${minutes}`;
+        } catch(e) {
+            return dateString;
+        }
+    }
+
+    // ===============================
+    // NAVIGATION
+    // ===============================
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        
+        if (screenId === 'sessionsScreen') {
+            loadSessions();
+        }
+    }
+
+    // ===============================
+    // SESSION MANAGEMENT
+    // ===============================
+    function addPlayer() {
+        const input = document.getElementById('playerNameInput');
+        const name = input.value.trim();
+        
+        if (!name) {
+            alert('الرجاء إدخال اسم اللاعب');
+            return;
+        }
+        
+        if (players.find(p => p.name === name)) {
+            alert('اسم اللاعب موجود مسبقاً');
+            return;
+        }
+        
+        players.push({
+            id: Date.now(),
+            name: name,
+            totalScore: 0,
+            gamesPlayed: 0
+        });
+        
+        input.value = '';
+        updatePlayersList();
+    }
+
+    function removePlayer(playerId) {
+        players = players.filter(p => p.id !== playerId);
+        updatePlayersList();
+    }
+
+    function updatePlayersList() {
+        const list = document.getElementById('playersList');
+        list.innerHTML = '';
+        
+        players.forEach(player => {
+            const item = document.createElement('div');
+            item.className = 'player-item';
+            item.innerHTML = `
+                <span class="player-name">${player.name}</span>
+                <button class="delete-btn" onclick="removePlayer(${player.id})">حذف</button>
+            `;
+            list.appendChild(item);
+        });
+        
+        document.getElementById('createSessionBtn').disabled = players.length < 3;
+    }
+
+    function createSession() {
+        const sessionName = document.getElementById('sessionName').value.trim();
+        
+        if (!sessionName) {
+            alert('الرجاء إدخال اسم الجلسة');
+            return;
+        }
+        
+        if (players.length < 3) {
+            alert('يجب إضافة 3 لاعبين على الأقل');
+            return;
+        }
+        
+        const session = {
+            id: Date.now(),
+            name: sessionName,
+            players: [...players],
+            totalGames: 0,
+            gameHistory: [],
+            createdAt: new Date().toISOString()
+        };
+        
+        Storage.saveSession(session);
+        currentSession = session;
+        
+        players = [];
+        document.getElementById('sessionName').value = '';
+        document.getElementById('playersList').innerHTML = '';
+        
+        loadSessionDetail(session.id);
+    }
+
+    function loadSessions() {
+        const sessions = Storage.getSessions();
+        const list = document.getElementById('sessionsList');
+        
+        if (sessions.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📂</div>
+                    <div class="empty-text">لا توجد جلسات محفوظة بعد</div>
+                </div>
+            `;
+            return;
+        }
+        
+        list.innerHTML = '';
+        sessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).forEach(session => {
+            const sortedPlayers = [...session.players].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+            const topPlayer = sortedPlayers[0];
+            const card = document.createElement('div');
+            card.className = 'session-card';
+            card.onclick = () => loadSessionDetail(session.id);
+            card.innerHTML = `
+                <div class="session-name">${session.name}</div>
+                <div class="session-info">
+                    <span class="stats-badge">👥 ${session.players.length} لاعبين</span>
+                    <span class="stats-badge">🎮 ${session.totalGames || 0} لعبة</span>
+                    <span class="stats-badge">🏆 ${topPlayer ? topPlayer.name : '-'}</span>
+                </div>
+                <div class="session-info" style="margin-top: 10px;">
+                    📅 ${formatDate(session.createdAt)}
+                </div>
+            `;
+            list.appendChild(card);
+        });
+    }
+
+    function loadSessionDetail(sessionId) {
+        currentSession = Storage.getSession(sessionId);
+        if (!currentSession) {
+            showScreen('sessionsScreen');
+            return;
+        }
+        document.getElementById('sessionTitle').textContent = currentSession.name;
+        updateSessionPlayersDisplay();
+        document.getElementById('imposterCount').max = Math.max(1, currentSession.players.length - 1);
+        showScreen('sessionDetailScreen');
+    }
+
+    function updateSessionPlayersDisplay() {
+        const playersDiv = document.getElementById('sessionPlayers');
+        playersDiv.innerHTML = '<h3>👥 اللاعبون والنقاط:</h3>';
+        
+        const sortedPlayers = [...currentSession.players].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+        
+        sortedPlayers.forEach((player, index) => {
+            const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+            const item = document.createElement('div');
+            item.className = 'score-item';
+            item.innerHTML = `
+                <span class="score-rank">${rank}</span>
+                <span class="score-name">${player.name}</span>
+                <span class="score-points">${player.totalScore || 0} نقطة</span>
+                <div class="player-actions">
+                    <button class="edit-btn" onclick="editPlayer(${player.id}, '${player.name}')">✏️</button>
+                    <button class="delete-btn" onclick="removePlayerFromSession(${player.id})">🗑️</button>
+                </div>
+            `;
+            playersDiv.appendChild(item);
+        });
+    }
+
+    function addPlayerToSession() {
+        const input = document.getElementById('newPlayerInput');
+        const name = input.value.trim();
+        
+        if (!name) {
+            alert('الرجاء إدخال اسم اللاعب');
+            return;
+        }
+        
+        if (currentSession.players.find(p => p.name === name)) {
+            alert('اسم اللاعب موجود مسبقاً');
+            return;
+        }
+        
+        currentSession.players.push({
+            id: Date.now(),
+            name: name,
+            totalScore: 0,
+            gamesPlayed: 0
+        });
+        
+        Storage.saveSession(currentSession);
+        input.value = '';
+        updateSessionPlayersDisplay();
+        document.getElementById('imposterCount').max = Math.max(1, currentSession.players.length - 1);
+    }
+
+    function removePlayerFromSession(playerId) {
+        if (currentSession.players.length <= 3) {
+            alert('لا يمكن حذف أكثر، يجب أن يبقى 3 لاعبين على الأقل');
+            return;
+        }
+        
+        if (confirm('هل أنت متأكد من حذف هذا اللاعب؟')) {
+            currentSession.players = currentSession.players.filter(p => p.id !== playerId);
+            Storage.saveSession(currentSession);
+            updateSessionPlayersDisplay();
+            document.getElementById('imposterCount').max = Math.max(1, currentSession.players.length - 1);
+        }
+    }
+
+    function editPlayer(playerId, currentName) {
+        document.getElementById('editPlayerId').value = playerId;
+        document.getElementById('editPlayerInput').value = currentName;
+        document.getElementById('editPlayerModal').classList.add('active');
+    }
+
+    function savePlayerEdit() {
+        const playerId = parseInt(document.getElementById('editPlayerId').value);
+        const newName = document.getElementById('editPlayerInput').value.trim();
+        
+        if (!newName) {
+            alert('الرجاء إدخال اسم اللاعب');
+            return;
+        }
+        
+        if (currentSession.players.find(p => p.name === newName && p.id !== playerId)) {
+            alert('اسم اللاعب موجود مسبقاً');
+            return;
+        }
+        
+        const player = currentSession.players.find(p => p.id === playerId);
+        if (player) {
+            player.name = newName;
+            Storage.saveSession(currentSession);
+            updateSessionPlayersDisplay();
+        }
+        
+        closeEditModal();
+    }
+
+    function closeEditModal() {
+        document.getElementById('editPlayerModal').classList.remove('active');
+    }
+
+    function deleteSession() {
+        if (confirm('هل أنت متأكد من حذف هذه الجلسة؟')) {
+            Storage.deleteSession(currentSession.id);
+            currentSession = null;
+            showScreen('sessionsScreen');
+        }
+    }
+
+    function showGameHistory() {
+        const list = document.getElementById('gameHistoryList');
+        
+        if (!currentSession.gameHistory || currentSession.gameHistory.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <div class="empty-text">لا يوجد تاريخ ألعاب بعد</div>
+                </div>
+            `;
+        } else {
+            list.innerHTML = '';
+            const reversedHistory = [...currentSession.gameHistory].reverse();
+            reversedHistory.forEach((game, index) => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <div class="history-date">${formatDate(game.timestamp)}</div>
+                    <div class="history-details">
+                        🎮 لعبة #${currentSession.gameHistory.length - index} | 
+                        الكلمة: ${game.word || '?'} | 
+                        ${game.imposterCount || 1} محتال | 
+                        ${game.winner || '?'}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        showScreen('gameHistoryScreen');
+    }
+
+    function backToSession() {
+        loadSessionDetail(currentSession.id);
+    }
+
+    // ===============================
+    // GAME LOGIC
+    // ===============================
+    function startGame() {
+        const imposterCount = parseInt(document.getElementById('imposterCount').value) || 1;
+        const category = document.getElementById('categorySelect').value;
+        const timerDuration = parseInt(document.getElementById('timerDuration').value) || 0;
+        const kidsMode = document.getElementById('kidsMode').checked;
+        const showHintToImposter = document.getElementById('showHintToImposter').checked;
+        
+        if (imposterCount >= currentSession.players.length) {
+            alert('عدد المحتالين يجب أن يكون أقل من عدد اللاعبين');
+            return;
+        }
+        
+        AudioManager.init();
+        
+        const words = WORDS[category];
+        if (!words || words.length === 0) {
+            alert('لا توجد كلمات في هذه الفئة');
+            return;
+        }
+        
+        const selectedWord = words[Math.floor(Math.random() * words.length)];
+        
+        const shuffled = [...currentSession.players].sort(() => Math.random() - 0.5);
+        const imposters = shuffled.slice(0, imposterCount).map(p => p.id);
+        
+        currentGame = {
+            word: selectedWord.word,
+            hint: kidsMode ? selectedWord.kidsHint : selectedWord.hint,
+            category: category,
+            imposters: imposters,
+            imposterCount: imposterCount,
+            timerDuration: timerDuration,
+            kidsMode: kidsMode,
+            showHintToImposter: showHintToImposter,
+            playerCards: currentSession.players.map(player => ({
+                ...player,
+                isImposter: imposters.includes(player.id),
+                revealed: false
+            }))
+        };
+        
+        currentPlayerIndex = 0;
+        allVotes = [];
+        selectedFirstPlayerIndex = -1;
+        
+        showFirstPlayerSelection();
+    }
+
+    // ===============================
+    // FIRST PLAYER SELECTION
+    // ===============================
+    function showFirstPlayerSelection() {
+        showScreen('firstPlayerScreen');
+        document.getElementById('firstPlayerResult').innerHTML = '';
+        document.getElementById('selectFirstBtn').style.display = 'block';
+    }
+
+    function selectFirstPlayer() {
+        AudioManager.playSuccess();
+        document.getElementById('selectFirstBtn').style.display = 'none';
+        
+        const wheel = document.createElement('div');
+        wheel.className = 'player-wheel spinning';
+        
+        const nameDisplay = document.createElement('div');
+        nameDisplay.className = 'wheel-player-name';
+        nameDisplay.textContent = '?';
+        wheel.appendChild(nameDisplay);
+        
+        const resultDiv = document.getElementById('firstPlayerResult');
+        resultDiv.innerHTML = '';
+        resultDiv.appendChild(wheel);
+        
+        let counter = 0;
+        const interval = setInterval(() => {
+            const player = currentGame.playerCards[counter % currentGame.playerCards.length];
+            nameDisplay.textContent = player.name;
+            counter++;
+        }, 100);
+        
+        setTimeout(() => {
+            clearInterval(interval);
+            wheel.classList.remove('spinning');
+            
+            selectedFirstPlayerIndex = Math.floor(Math.random() * currentGame.playerCards.length);
+            const firstPlayer = currentGame.playerCards[selectedFirstPlayerIndex];
+            nameDisplay.textContent = firstPlayer.name;
+            
+            AudioManager.playAlert();
+            
+            resultDiv.innerHTML = `
+                <div class="selected-player-banner">
+                    <div style="font-size: 20px;">🎉 اللاعب الأول هو:</div>
+                    <div class="selected-player-name">${firstPlayer.name}</div>
+                    <div style="font-size: 16px; margin-top: 10px;">
+                        سلّم الموبايل لـ ${firstPlayer.name} لبدء كشف البطاقات!
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="startCardReveal()">
+                    ✅ ${firstPlayer.name} جاهز - ابدأ الآن!
+                </button>
+            `;
+        }, 2000);
+    }
+
+    // ===============================
+    // CARD REVEAL
+    // ===============================
+    function startCardReveal() {
+        if (selectedFirstPlayerIndex > 0) {
+            const reordered = [
+                ...currentGame.playerCards.slice(selectedFirstPlayerIndex),
+                ...currentGame.playerCards.slice(0, selectedFirstPlayerIndex)
+            ];
+            currentGame.playerCards = reordered;
+        }
+        
+        currentPlayerIndex = 0;
+        showScreen('cardRevealScreen');
+        showNextPlayer();
+    }
+
+    function showNextPlayer() {
+        if (currentPlayerIndex >= currentGame.playerCards.length) {
+            startDiscussion();
+            return;
+        }
+        
+        const player = currentGame.playerCards[currentPlayerIndex];
+        document.getElementById('currentPlayerName').textContent = `دور اللاعب: ${player.name}`;
+        document.getElementById('revealCardBtn').style.display = 'block';
+        document.getElementById('cardContainer').innerHTML = '';
+        document.getElementById('nextPlayerBtn').innerHTML = '';
+    }
+
+    function revealCard() {
+        const player = currentGame.playerCards[currentPlayerIndex];
+        player.revealed = true;
+        
+        document.getElementById('revealCardBtn').style.display = 'none';
+        
+        const cardDiv = document.createElement('div');
+        cardDiv.className = player.isImposter ? 'card imposter-card' : 
+                           currentGame.kidsMode ? 'card kids-card' : 'card';
+        
+        if (player.isImposter) {
+            let imposterContent = `
+                <div class="card-word">🎭</div>
+                <div class="card-role">أنت المحتال!</div>
+            `;
+            if (currentGame.showHintToImposter) {
+                imposterContent += `<div class="card-hint">التلميح: ${currentGame.hint}</div>`;
+            } else {
+                imposterContent += `<div class="card-hint" style="font-size: 16px; opacity: 0.7;">لا تلميح لك، حاول الاندماج!</div>`;
+            }
+            cardDiv.innerHTML = imposterContent;
+        } else {
+            cardDiv.innerHTML = `
+                <div class="card-word">${currentGame.word}</div>
+                <div class="card-role">✅ لاعب عادي</div>
+                ${currentGame.kidsMode ? `<div class="card-hint" style="font-size: 16px;">💡 ${currentGame.hint}</div>` : ''}
+            `;
+        }
+        
+        document.getElementById('cardContainer').appendChild(cardDiv);
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'btn btn-success';
+        nextBtn.textContent = currentPlayerIndex < currentGame.playerCards.length - 1 
+            ? '👉 اللاعب التالي' 
+            : '✅ بدء النقاش';
+        nextBtn.onclick = moveToNextPlayer;
+        document.getElementById('nextPlayerBtn').appendChild(nextBtn);
+    }
+
+    function moveToNextPlayer() {
+        AudioManager.playAlert();
+        
+        const nextIndex = currentPlayerIndex + 1;
+        if (nextIndex < currentGame.playerCards.length) {
+            const nextPlayer = currentGame.playerCards[nextIndex];
+            document.getElementById('nextPlayerNameDisplay').textContent = nextPlayer.name;
+        } else {
+            document.getElementById('nextPlayerNameDisplay').textContent = 'الجميع!';
+        }
+        
+        document.getElementById('privacyScreen').classList.add('active');
+        
+        setTimeout(() => {
+            document.getElementById('privacyScreen').classList.remove('active');
+            currentPlayerIndex++;
+            showNextPlayer();
+        }, 3000);
+    }
+
+    // ===============================
+    // DISCUSSION
+    // ===============================
+    function startDiscussion() {
+        showScreen('discussionScreen');
+        
+        const container = document.getElementById('timerContainer');
+        container.innerHTML = `
+            <div class="speaker-selection">
+                <h3 style="margin-bottom: 20px;">🎲 من سيبدأ الحديث؟</h3>
+                <button class="btn btn-success" onclick="selectRandomSpeaker()" id="selectSpeakerBtn">
+                    🎯 اختيار عشوائي
+                </button>
+                <div id="speakerResult"></div>
+            </div>
+        `;
+    }
+
+    function selectRandomSpeaker() {
+        AudioManager.playSuccess();
+        document.getElementById('selectSpeakerBtn').style.display = 'none';
+        
+        const wheel = document.createElement('div');
+        wheel.className = 'speaker-wheel spinning';
+        
+        const nameDisplay = document.createElement('div');
+        nameDisplay.className = 'speaker-name';
+        nameDisplay.textContent = '?';
+        wheel.appendChild(nameDisplay);
+        
+        const resultDiv = document.getElementById('speakerResult');
+        resultDiv.innerHTML = '';
+        resultDiv.appendChild(wheel);
+        
+        let counter = 0;
+        const interval = setInterval(() => {
+            const player = currentGame.playerCards[counter % currentGame.playerCards.length];
+            nameDisplay.textContent = player.name;
+            counter++;
+        }, 80);
+        
+        setTimeout(() => {
+            clearInterval(interval);
+            wheel.classList.remove('spinning');
+            
+            // If hints are disabled for imposter, don't pick imposter as first speaker
+            let eligibleSpeakers = [...currentGame.playerCards];
+            if (!currentGame.showHintToImposter) {
+                // Filter out imposters for first speaker
+                const nonImposters = eligibleSpeakers.filter(p => !currentGame.imposters.includes(p.id));
+                if (nonImposters.length > 0) {
+                    eligibleSpeakers = nonImposters;
+                }
+            }
+            
+            const speaker = eligibleSpeakers[Math.floor(Math.random() * eligibleSpeakers.length)];
+            
+            AudioManager.playAlert();
+            
+            resultDiv.innerHTML = `
+                <div class="selected-speaker">
+                    🗣️ ${speaker.name} سيبدأ الحديث!
+                </div>
+                <button class="btn" onclick="startActualTimer()" style="margin-top: 15px;">
+                    ⏱️ ابدأ المؤقت
+                </button>
+            `;
+        }, 1500);
+    }
+
+    function startActualTimer() {
+        if (currentGame.timerDuration > 0) {
+            startTimer();
+        } else {
+            const container = document.getElementById('timerContainer');
+            container.innerHTML = `
+                <p style="text-align: center; font-size: 20px; color: #666; margin-top: 30px;">
+                    💬 ناقشوا واكتشفوا المحتال!<br>
+                    (بدون مؤقت)
+                </p>
+            `;
+        }
+    }
+
+    function startTimer() {
+        let totalSeconds = currentGame.timerDuration * currentGame.playerCards.length;
+        
+        const container = document.getElementById('timerContainer');
+        container.innerHTML = `
+            <div class="timer-display" id="timerDisplay">${formatTime(totalSeconds)}</div>
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button class="btn" style="flex: 1;" onclick="pauseTimer()">⏸️ إيقاف</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="addTime(30)">➕30ث</button>
+            </div>
+        `;
+        
+        timerInterval = setInterval(() => {
+            totalSeconds--;
+            const display = document.getElementById('timerDisplay');
+            if (display) {
+                display.textContent = formatTime(totalSeconds);
+                
+                if (totalSeconds <= 10) {
+                    display.classList.add('warning');
+                }
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    AudioManager.playAlert();
+                    proceedToVoting();
+                }
+            }
+        }, 1000);
+    }
+
+    function pauseTimer() {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        const btnContainer = document.querySelector('#timerContainer > div:last-child');
+        if (btnContainer) {
+            btnContainer.innerHTML = `
+                <button class="btn btn-success" style="flex: 1;" onclick="resumeTimer()">▶️ استئناف</button>
+                <button class="btn" style="flex: 1;" onclick="addTime(30)">➕30ث</button>
+            `;
+        }
+    }
+
+    function resumeTimer() {
+        const display = document.getElementById('timerDisplay');
+        if (!display) return;
+        
+        const timeText = display.textContent;
+        const [minutes, seconds] = timeText.split(':').map(Number);
+        let totalSeconds = minutes * 60 + seconds;
+        
+        timerInterval = setInterval(() => {
+            totalSeconds--;
+            display.textContent = formatTime(totalSeconds);
+            
+            if (totalSeconds <= 10) {
+                display.classList.add('warning');
+            }
+            
+            if (totalSeconds <= 0) {
+                clearInterval(timerInterval);
+                AudioManager.playAlert();
+                proceedToVoting();
+            }
+        }, 1000);
+        
+        const btnContainer = document.querySelector('#timerContainer > div:last-child');
+        if (btnContainer) {
+            btnContainer.innerHTML = `
+                <button class="btn" style="flex: 1;" onclick="pauseTimer()">⏸️ إيقاف</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="addTime(30)">➕30ث</button>
+            `;
+        }
+    }
+
+    function addTime(seconds) {
+        const display = document.getElementById('timerDisplay');
+        if (!display) return;
+        
+        const timeText = display.textContent;
+        const [minutes, secs] = timeText.split(':').map(Number);
+        let totalSeconds = minutes * 60 + secs + seconds;
+        display.textContent = formatTime(totalSeconds);
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // ===============================
+    // VOTING - UPDATED SYSTEM
+    // ===============================
+    function proceedToVoting() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+        
+        currentVoterIndex = 0;
+        allVotes = [];
+        showVotingForPlayer();
+    }
+
+    function showVotingForPlayer() {
+        showScreen('votingScreen');
+        
+        const voter = currentGame.playerCards[currentVoterIndex];
+        document.getElementById('currentVoter').textContent = voter.name;
+        
+        // Check if this voter is an imposter
+        const voterIsImposter = currentGame.imposters.includes(voter.id);
+        
+        // Reset current votes
+        currentVotes = [];
+        
+        const instructionsDiv = document.getElementById('votingInstructions');
+        
+        if (voterIsImposter) {
+            // Imposter votes for ONE person only (to blend in)
+            instructionsDiv.innerHTML = `
+                <div class="imposter-vote-info">
+                    🎭 أنت المحتال! صوّت على شخص واحد للتمويه
+                </div>
+            `;
+        } else {
+            // Regular player votes for number of imposters
+            const votesNeeded = currentGame.imposterCount;
+            instructionsDiv.innerHTML = `
+                <div class="votes-remaining">
+                    اختر <strong>${votesNeeded}</strong> لاعب${votesNeeded > 1 ? 'ين تعتقد أنهم محتالين' : ' تعتقد أنه المحتال'}
+                </div>
+            `;
+        }
+        
+        const grid = document.getElementById('voteGrid');
+        grid.innerHTML = '';
+        
+        currentGame.playerCards.forEach(player => {
+            if (player.id === voter.id) return;
+            
+            const card = document.createElement('div');
+            card.className = 'vote-card';
+            card.dataset.playerId = player.id;
+            card.onclick = () => toggleVote(card, player.id, voterIsImposter);
+            card.innerHTML = `
+                <div class="vote-card-name">${player.name}</div>
+            `;
+            grid.appendChild(card);
+        });
+        
+        updateVoteButton(voterIsImposter);
+    }
+
+    function toggleVote(cardElement, playerId, voterIsImposter) {
+        // Imposter votes for 1, regular player votes for imposterCount
+        const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
+        
+        if (currentVotes.includes(playerId)) {
+            currentVotes = currentVotes.filter(id => id !== playerId);
+            cardElement.classList.remove('selected');
+        } else {
+            if (currentVotes.length < maxVotes) {
+                currentVotes.push(playerId);
+                cardElement.classList.add('selected');
+            } else {
+                alert(`يمكنك اختيار ${maxVotes} لاعب${maxVotes > 1 ? 'ين' : ''} فقط`);
+            }
+        }
+        
+        updateVoteButton(voterIsImposter);
+    }
+
+    function updateVoteButton(voterIsImposter) {
+        const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
+        const btn = document.getElementById('submitVoteBtn');
+        
+        if (currentVotes.length === maxVotes) {
+            btn.disabled = false;
+            btn.textContent = '✅ تأكيد التصويت';
+            btn.style.opacity = '1';
+        } else {
+            btn.disabled = true;
+            const remaining = maxVotes - currentVotes.length;
+            btn.textContent = `اختر ${remaining} لاعب${remaining > 1 ? 'ين' : ''} ${remaining > 1 ? 'آخرين' : 'آخر'}`;
+            btn.style.opacity = '0.6';
+        }
+    }
+
+    function submitCurrentVote() {
+        const voter = currentGame.playerCards[currentVoterIndex];
+        const voterIsImposter = currentGame.imposters.includes(voter.id);
+        const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
+        
+        if (currentVotes.length !== maxVotes) {
+            alert(`الرجاء اختيار ${maxVotes} لاعب${maxVotes > 1 ? 'ين' : ''}`);
+            return;
+        }
+        
+        // Store votes
+        currentVotes.forEach(votedForId => {
+            allVotes.push({
+                voterId: voter.id,
+                voterName: voter.name,
+                voterIsImposter: voterIsImposter,
+                votedFor: votedForId
+            });
+        });
+        
+        currentVotes = [];
+        currentVoterIndex++;
+        
+        if (currentVoterIndex < currentGame.playerCards.length) {
+            AudioManager.playAlert();
+            
+            const nextVoter = currentGame.playerCards[currentVoterIndex];
+            document.getElementById('nextPlayerNameDisplay').textContent = nextVoter.name;
+            document.getElementById('privacyScreen').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('privacyScreen').classList.remove('active');
+                showVotingForPlayer();
+            }, 3000);
+        } else {
+            showSuspenseScreen();
+        }
+    }
+
+    // ===============================
+    // SUSPENSE & REVEAL
+    // ===============================
+    function showSuspenseScreen() {
+        showScreen('suspenseScreen');
+        AudioManager.playDrama();
+        
+        const texts = [
+            'من هو المحتال؟',
+            'هل نجحتم في كشفه؟',
+            'اللحظة الحاسمة...',
+            'استعدوا للمفاجأة!'
+        ];
+        
+        let textIndex = 0;
+        const suspenseInterval = setInterval(() => {
+            const textEl = document.getElementById('suspenseText');
+            if (textEl) {
+                textEl.textContent = texts[textIndex];
+            }
+            textIndex++;
+            if (textIndex >= texts.length) {
+                clearInterval(suspenseInterval);
+            }
+        }, 1500);
+    }
+
+    function revealImposter() {
+        AudioManager.playDrama();
+        
+        const container = document.querySelector('.suspense-container');
+        container.innerHTML = '<h1>🎭 المحتال كان...</h1>';
+        
+        setTimeout(() => {
+            currentGame.imposters.forEach((imposterId, index) => {
+                setTimeout(() => {
+                    const imposter = currentGame.playerCards.find(p => p.id === imposterId);
+                    if (imposter) {
+                        const revealDiv = document.createElement('div');
+                        revealDiv.className = 'reveal-imposter';
+                        revealDiv.innerHTML = `<h2 style="font-size: 48px; color: #ff0844;">🎭 ${imposter.name}!</h2>`;
+                        container.appendChild(revealDiv);
+                        AudioManager.playAlert();
+                    }
+                }, index * 1000);
+            });
+            
+            // Add continue button after revealing all imposters
+            setTimeout(() => {
+                const continueBtn = document.createElement('button');
+                continueBtn.className = 'btn btn-success';
+                continueBtn.style.marginTop = '30px';
+                continueBtn.innerHTML = '📊 عرض النتائج';
+                continueBtn.onclick = calculateResults;
+                container.appendChild(continueBtn);
+                
+                Confetti.create();
+            }, (currentGame.imposters.length * 1000) + 500);
+        }, 1000);
+    }
+
+    // ===============================
+    // SCORING - NEW CLEAR SYSTEM
+    // ===============================
+    function calculateResults() {
+        const results = [];
+        
+        // Count votes against each player
+        const voteCounts = {};
+        currentGame.playerCards.forEach(p => {
+            voteCounts[p.id] = 0;
+        });
+        
+        allVotes.forEach(vote => {
+            voteCounts[vote.votedFor] = (voteCounts[vote.votedFor] || 0) + 1;
+        });
+        
+        // Calculate scores for each player
+        currentGame.playerCards.forEach(player => {
+            let score = 0;
+            let breakdown = [];
+            const votesAgainst = voteCounts[player.id] || 0;
+            const regularPlayersCount = currentGame.playerCards.length - currentGame.imposterCount;
+            
+            if (player.isImposter) {
+                // IMPOSTER SCORING
+                // Imposters want to avoid detection
+                if (votesAgainst === 0) {
+                    score = 30;
+                    breakdown.push('+30 (لم يشك بك أحد!)');
+                } else if (votesAgainst < regularPlayersCount / 2) {
+                    score = 20;
+                    breakdown.push('+20 (شك بك القليل فقط)');
+                } else {
+                    score = 0;
+                    breakdown.push('+0 (تم كشفك!)');
+                }
+            } else {
+                // REGULAR PLAYER SCORING
+                // Get this player's votes
+                const playerVotes = allVotes.filter(v => v.voterId === player.id);
+                
+                playerVotes.forEach(vote => {
+                    const votedForIsImposter = currentGame.imposters.includes(vote.votedFor);
+                    if (votedForIsImposter) {
+                        score += 10;
+                        breakdown.push('+10 (صوت صحيح على محتال)');
+                    } else {
+                        score -= 5;
+                        breakdown.push('-5 (صوت خاطئ على بريء)');
+                    }
+                });
+            }
+            
+            // Update session player score (allow negative totals)
+            const sessionPlayer = currentSession.players.find(p => p.id === player.id);
+            if (sessionPlayer) {
+                sessionPlayer.totalScore = (sessionPlayer.totalScore || 0) + score;
+                sessionPlayer.gamesPlayed = (sessionPlayer.gamesPlayed || 0) + 1;
+            }
+            
+            results.push({
+                id: player.id,
+                name: player.name,
+                isImposter: player.isImposter,
+                score: score,
+                breakdown: breakdown,
+                votesAgainst: votesAgainst
+            });
+        });
+        
+        // Determine winner
+        const impostersCaught = currentGame.imposters.filter(id => {
+            const votes = voteCounts[id] || 0;
+            const regularPlayersCount = currentGame.playerCards.length - currentGame.imposterCount;
+            return votes >= regularPlayersCount / 2;
+        }).length;
+        
+        const winner = impostersCaught >= currentGame.imposterCount / 2 ? 'اللاعبون العاديون' : 'المحتالون';
+        
+        // Save game to history
+        currentSession.totalGames = (currentSession.totalGames || 0) + 1;
+        if (!currentSession.gameHistory) currentSession.gameHistory = [];
+        currentSession.gameHistory.push({
+            timestamp: new Date().toISOString(),
+            category: currentGame.category,
+            imposterCount: currentGame.imposterCount,
+            winner: winner,
+            word: currentGame.word
+        });
+        
+        Storage.saveSession(currentSession);
+        
+        showResults(results, winner);
+    }
+
+    function showResults(results, winner) {
+        showScreen('resultsScreen');
+        
+        const playersWon = winner === 'اللاعبون العاديون';
+        
+        if (playersWon) {
+            Confetti.create();
+        }
+        
+        const imposters = results.filter(r => r.isImposter);
+        const sorted = [...results].sort((a, b) => b.score - a.score);
+        
+        let html = `
+            <div class="winner-banner" style="${!playersWon ? 'background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);' : ''}">
+                ${playersWon 
+                    ? '🎉 اللاعبون العاديون فازوا! تم كشف المحتالين!' 
+                    : '😈 المحتالون فازوا! نجحوا في الخداع!'}
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin: 15px 0;">
+                <h4 style="margin-bottom: 10px;">📝 الكلمة كانت:</h4>
+                <div style="font-size: 28px; font-weight: bold; color: #667eea;">${currentGame.word}</div>
+            </div>
+            
+            <h3 style="margin: 20px 0;">🎭 المحتالون:</h3>
+            ${imposters.map(i => `
+                <div class="player-item" style="background: ${i.score > 0 ? '#e8f5e9' : '#ffebee'};">
+                    <span class="player-name">${i.name} 🎭</span>
+                    <div style="text-align: left;">
+                        <span style="color: #999; font-size: 12px; display: block;">
+                            ${i.votesAgainst} صوت ضده
+                        </span>
+                        <span style="color: ${i.score > 0 ? '#4caf50' : '#ff0844'}; font-weight: bold;">
+                            ${i.score >= 0 ? '+' : ''}${i.score} نقطة
+                        </span>
+                    </div>
+                </div>
+            `).join('')}
+            
+            <h3 style="margin: 20px 0;">📊 نقاط هذه الجولة:</h3>
+            <div class="score-list">
+                ${sorted.map((player, index) => {
+                    const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                    return `
+                        <div class="score-item">
+                            <span class="score-rank">${rank}</span>
+                            <span class="score-name">
+                                ${player.name}
+                                ${player.isImposter ? '🎭' : ''}
+                                <span class="score-breakdown">${player.breakdown.join(' | ')}</span>
+                            </span>
+                            <span class="score-points" style="color: ${player.score >= 0 ? '#27ae60' : '#e74c3c'};">
+                                ${player.score >= 0 ? '+' : ''}${player.score}
+                            </span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <h3 style="margin: 20px 0;">🏆 الترتيب الإجمالي:</h3>
+            <div class="score-list">
+                ${[...currentSession.players]
+                    .sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0))
+                    .map((player, index) => {
+                        const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                        const totalScore = player.totalScore || 0;
+                        return `
+                            <div class="score-item">
+                                <span class="score-rank">${rank}</span>
+                                <span class="score-name">${player.name}</span>
+                                <span class="score-points" style="color: ${totalScore >= 0 ? '#667eea' : '#e74c3c'};">
+                                    ${totalScore} نقطة
+                                </span>
+                            </div>
+                        `;
+                    }).join('')}
+            </div>
+        `;
+        
+        document.getElementById('resultsContent').innerHTML = html;
+    }
+
+    function playAgain() {
+        loadSessionDetail(currentSession.id);
+    }
+
+    function endSession() {
+        currentSession = null;
+        currentGame = null;
+        showScreen('sessionsScreen');
+    }
+
+    // ===============================
+    // INITIALIZE
+    // ===============================
+    window.addEventListener('load', () => {
+        showScreen('homeScreen');
+    });
+    
+    // Prevent errors on undefined elements
+    window.onerror = function(msg, url, lineNo, columnNo, error) {
+        console.log('Error: ' + msg);
+        return true;
+    };
+</script>
+```
+
+</body>
+</html>
