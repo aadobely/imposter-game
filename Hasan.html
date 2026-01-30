@@ -830,6 +830,7 @@
         
         <button class="btn" onclick="startGame()">▶️ بدء اللعبة</button>
         <button class="btn btn-success" onclick="showGameHistory()">📜 تاريخ الألعاب</button>
+        <button class="btn btn-secondary" onclick="resetSessionScores()">🔄 تصفير نقاط الجلسة</button>
         <button class="btn btn-danger" onclick="deleteSession()">🗑️ حذف الجلسة</button>
         <button class="btn btn-secondary" onclick="showScreen('sessionsScreen')">🔙 رجوع</button>
     </div>
@@ -913,6 +914,7 @@
             <h1>🏆 نتائج اللعبة</h1>
             <div id="resultsContent"></div>
             <button class="btn" onclick="playAgain()">🔄 لعبة جديدة</button>
+            <button class="btn btn-danger" onclick="resetCurrentGameScores()">❌ إلغاء نتائج هذه الجولة</button>
             <button class="btn btn-secondary" onclick="endSession()">🏁 إنهاء الجلسة</button>
         </div>
     </div>
@@ -1692,6 +1694,47 @@
             showScreen('sessionsScreen');
         }
     }
+    
+    function resetSessionScores() {
+        if (confirm('هل أنت متأكد من تصفير جميع نقاط اللاعبين في هذه الجلسة؟')) {
+            currentSession.players.forEach(player => {
+                player.totalScore = 0;
+                player.gamesPlayed = 0;
+            });
+            currentSession.totalGames = 0;
+            currentSession.gameHistory = [];
+            Storage.saveSession(currentSession);
+            updateSessionPlayersDisplay();
+            AudioManager.playSuccess();
+            alert('تم تصفير جميع النقاط بنجاح! ✅');
+        }
+    }
+    
+    function resetCurrentGameScores() {
+        if (confirm('هل أنت متأكد من إلغاء نتائج هذه الجولة؟')) {
+            // Revert the scores that were added in this game
+            if (currentGame && currentGame.gameScores) {
+                currentGame.gameScores.forEach(gs => {
+                    const player = currentSession.players.find(p => p.id === gs.id);
+                    if (player) {
+                        player.totalScore = (player.totalScore || 0) - gs.score;
+                        player.gamesPlayed = Math.max(0, (player.gamesPlayed || 1) - 1);
+                    }
+                });
+                
+                // Remove the last game from history
+                if (currentSession.gameHistory && currentSession.gameHistory.length > 0) {
+                    currentSession.gameHistory.pop();
+                }
+                currentSession.totalGames = Math.max(0, (currentSession.totalGames || 1) - 1);
+                
+                Storage.saveSession(currentSession);
+            }
+            
+            loadSessionDetail(currentSession.id);
+            alert('تم إلغاء نتائج هذه الجولة! ✅');
+        }
+    }
 
     function showGameHistory() {
         const list = document.getElementById('gameHistoryList');
@@ -1830,8 +1873,8 @@
                         سلّم الموبايل لـ ${firstPlayer.name} لبدء كشف البطاقات!
                     </div>
                 </div>
-                <button class="btn btn-success" onclick="startCardReveal()">
-                    ✅ ${firstPlayer.name} جاهز - ابدأ الآن!
+                <button class="btn btn-success" onclick="showFirstPlayerPrivacy()">
+                    ✅ تم تسليم الموبايل - المتابعة
                 </button>
             `;
         }, 2000);
@@ -1852,6 +1895,39 @@
         currentPlayerIndex = 0;
         showScreen('cardRevealScreen');
         showNextPlayer();
+    }
+    
+    function showFirstPlayerPrivacy() {
+        // Reorder players so first player is at index 0
+        if (selectedFirstPlayerIndex > 0) {
+            const reordered = [
+                ...currentGame.playerCards.slice(selectedFirstPlayerIndex),
+                ...currentGame.playerCards.slice(0, selectedFirstPlayerIndex)
+            ];
+            currentGame.playerCards = reordered;
+        }
+        
+        const firstPlayer = currentGame.playerCards[0];
+        const privacyScreen = document.getElementById('privacyScreen');
+        const content = privacyScreen.querySelector('.privacy-content');
+        
+        content.innerHTML = `
+            <div class="privacy-icon">🎴</div>
+            <div class="privacy-text">دور كشف البطاقة لـ:</div>
+            <div class="next-player-name">${firstPlayer.name}</div>
+            <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="firstPlayerReadyBtn">
+                ✅ أنا ${firstPlayer.name} - جاهز!
+            </button>
+        `;
+        
+        privacyScreen.classList.add('active');
+        
+        document.getElementById('firstPlayerReadyBtn').onclick = function() {
+            privacyScreen.classList.remove('active');
+            currentPlayerIndex = 0;
+            showScreen('cardRevealScreen');
+            showNextPlayer();
+        };
     }
 
     function showNextPlayer() {
@@ -1911,20 +1987,48 @@
         AudioManager.playAlert();
         
         const nextIndex = currentPlayerIndex + 1;
+        const privacyScreen = document.getElementById('privacyScreen');
+        const content = privacyScreen.querySelector('.privacy-content');
+        
         if (nextIndex < currentGame.playerCards.length) {
             const nextPlayer = currentGame.playerCards[nextIndex];
-            document.getElementById('nextPlayerNameDisplay').textContent = nextPlayer.name;
+            content.innerHTML = `
+                <div class="privacy-icon">📱</div>
+                <div class="privacy-text">مرر الجهاز إلى:</div>
+                <div class="next-player-name">${nextPlayer.name}</div>
+                <div class="privacy-text" style="font-size: 18px; opacity: 0.8; margin-top: 20px;">
+                    🙈 الرجاء عدم النظر للشاشة!
+                </div>
+                <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="nextPlayerReadyBtn">
+                    ✅ أنا ${nextPlayer.name} - جاهز!
+                </button>
+            `;
+            
+            privacyScreen.classList.add('active');
+            
+            document.getElementById('nextPlayerReadyBtn').onclick = function() {
+                privacyScreen.classList.remove('active');
+                currentPlayerIndex++;
+                showNextPlayer();
+            };
         } else {
-            document.getElementById('nextPlayerNameDisplay').textContent = 'الجميع!';
+            content.innerHTML = `
+                <div class="privacy-icon">💬</div>
+                <div class="privacy-text">الجميع شاهدوا بطاقاتهم!</div>
+                <div class="next-player-name">وقت النقاش</div>
+                <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="startDiscussionBtn">
+                    ▶️ ابدأ النقاش
+                </button>
+            `;
+            
+            privacyScreen.classList.add('active');
+            
+            document.getElementById('startDiscussionBtn').onclick = function() {
+                privacyScreen.classList.remove('active');
+                currentPlayerIndex++;
+                showNextPlayer();
+            };
         }
-        
-        document.getElementById('privacyScreen').classList.add('active');
-        
-        setTimeout(() => {
-            document.getElementById('privacyScreen').classList.remove('active');
-            currentPlayerIndex++;
-            showNextPlayer();
-        }, 3000);
     }
 
     // ===============================
@@ -2113,7 +2217,28 @@
         
         currentVoterIndex = 0;
         allVotes = [];
-        showVotingForPlayer();
+        
+        // Show privacy screen for first voter
+        const firstVoter = currentGame.playerCards[0];
+        const privacyScreen = document.getElementById('privacyScreen');
+        const content = privacyScreen.querySelector('.privacy-content');
+        
+        content.innerHTML = `
+            <div class="privacy-icon">🗳️</div>
+            <div class="privacy-text">وقت التصويت!</div>
+            <div class="privacy-text" style="font-size: 18px;">دور التصويت لـ:</div>
+            <div class="next-player-name">${firstVoter.name}</div>
+            <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="firstVoterReadyBtn">
+                ✅ أنا ${firstVoter.name} - جاهز!
+            </button>
+        `;
+        
+        privacyScreen.classList.add('active');
+        
+        document.getElementById('firstVoterReadyBtn').onclick = function() {
+            privacyScreen.classList.remove('active');
+            showVotingForPlayer();
+        };
     }
 
     function showVotingForPlayer() {
@@ -2228,13 +2353,24 @@
             AudioManager.playAlert();
             
             const nextVoter = currentGame.playerCards[currentVoterIndex];
-            document.getElementById('nextPlayerNameDisplay').textContent = nextVoter.name;
-            document.getElementById('privacyScreen').classList.add('active');
+            const privacyScreen = document.getElementById('privacyScreen');
+            const content = privacyScreen.querySelector('.privacy-content');
             
-            setTimeout(() => {
-                document.getElementById('privacyScreen').classList.remove('active');
+            content.innerHTML = `
+                <div class="privacy-icon">🗳️</div>
+                <div class="privacy-text">دور التصويت لـ:</div>
+                <div class="next-player-name">${nextVoter.name}</div>
+                <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="voterReadyBtn">
+                    ✅ أنا ${nextVoter.name} - جاهز!
+                </button>
+            `;
+            
+            privacyScreen.classList.add('active');
+            
+            document.getElementById('voterReadyBtn').onclick = function() {
+                privacyScreen.classList.remove('active');
                 showVotingForPlayer();
-            }, 3000);
+            };
         } else {
             showSuspenseScreen();
         }
@@ -2370,6 +2506,9 @@
                 votesAgainst: votesAgainst
             });
         });
+        
+        // Store scores for potential reset
+        currentGame.gameScores = results.map(r => ({ id: r.id, score: r.score }));
         
         // Determine winner
         const impostersCaught = currentGame.imposters.filter(id => {
