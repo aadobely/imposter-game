@@ -6,7 +6,7 @@ A fun Arabic party game where players try to find the imposter among them!
 
 ## 🎮 Play Now | العب الآن
 
-**[Play the Game](https://YOUR_USERNAME.github.io/imposter-game/)**
+**[Play the Game](https://aadobely.github.io/imposter-game/index.html)**
 
 ## 📱 Features | المميزات
 
