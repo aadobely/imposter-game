@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>من المحتال؟ - Who is the Imposter? Pro</title>
+    <title>من المحتال؟ - Who is the Imposter?</title>
     <style>
         * {
             margin: 0;
@@ -23,6 +23,11 @@
         align-items: center;
         padding: 20px;
         color: #333;
+    }
+
+    body.en {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        direction: ltr;
     }
 
     .container {
@@ -93,6 +98,30 @@
     .btn-success { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
     .btn-danger { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
     .btn-small { padding: 8px 15px; font-size: 14px; width: auto; margin: 5px; }
+
+    .lang-toggle {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .lang-btn {
+        padding: 10px 25px;
+        border: 3px solid #667eea;
+        background: white;
+        color: #667eea;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .lang-btn.active {
+        background: #667eea;
+        color: white;
+    }
 
     .toggle-container {
         display: flex;
@@ -460,6 +489,11 @@
         margin-left: 15px;
     }
 
+    body.en .score-rank {
+        margin-left: 0;
+        margin-right: 15px;
+    }
+
     .score-name {
         flex: 1;
         font-size: 18px;
@@ -554,6 +588,11 @@
         padding: 15px;
         margin: 10px 0;
         border-right: 5px solid #667eea;
+    }
+
+    body.en .history-item {
+        border-right: none;
+        border-left: 5px solid #667eea;
     }
 
     .player-wheel {
@@ -705,6 +744,7 @@
         margin: 15px 0;
         font-size: 14px;
         line-height: 1.8;
+        text-align: start;
     }
 
     .scoring-rules h4 {
@@ -729,33 +769,51 @@
 </head>
 <body>
     <div class="container">
-        <!-- Home Screen -->
-        <div id="homeScreen" class="screen active">
-            <h1>🎭 من المحتال؟</h1>
-            <p class="subtitle">اكتشف المحتال بين أصدقائك!</p>
-            <button class="btn" onclick="showScreen('sessionsScreen')">📂 جلساتي</button>
-            <button class="btn btn-secondary" onclick="showScreen('newSessionScreen')">➕ جلسة جديدة</button>
-            <button class="btn btn-success" onclick="showScreen('howToPlayScreen')">❓ كيف تلعب؟</button>
+        <!-- Language Selection Screen -->
+        <div id="langScreen" class="screen active">
+            <h1>🎭</h1>
+            <p class="subtitle" style="font-size: 20px; margin: 30px 0;">Choose Language / اختر اللغة</p>
+            <div class="lang-toggle" style="flex-direction: column; gap: 15px;">
+                <button class="btn" onclick="setLanguage('ar')" style="font-size: 24px;">
+                    🇸🇾 العربية
+                </button>
+                <button class="btn btn-secondary" onclick="setLanguage('en')" style="font-size: 24px;">
+                    🇬🇧 English
+                </button>
+            </div>
         </div>
 
 ```
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen">
+        <div class="lang-toggle">
+            <button class="lang-btn active" id="langAr" onclick="setLanguage('ar')">العربية</button>
+            <button class="lang-btn" id="langEn" onclick="setLanguage('en')">English</button>
+        </div>
+        <h1>🎭 <span data-t="title"></span></h1>
+        <p class="subtitle" data-t="subtitle"></p>
+        <button class="btn" onclick="showScreen('sessionsScreen')">📂 <span data-t="mySessions"></span></button>
+        <button class="btn btn-secondary" onclick="showScreen('newSessionScreen')">➕ <span data-t="newSession"></span></button>
+        <button class="btn btn-success" onclick="showScreen('howToPlayScreen')">❓ <span data-t="howToPlay"></span></button>
+    </div>
+
     <!-- Sessions List Screen -->
     <div id="sessionsScreen" class="screen">
-        <h1>📂 جلساتي</h1>
+        <h1>📂 <span data-t="mySessions"></span></h1>
         <div id="sessionsList"></div>
-        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 رجوع</button>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 <span data-t="back"></span></button>
     </div>
 
     <!-- New Session Screen -->
     <div id="newSessionScreen" class="screen">
-        <h1>➕ جلسة جديدة</h1>
-        <input type="text" id="sessionName" placeholder="اسم الجلسة (مثال: سهرة الأصدقاء)">
-        <h3 style="margin: 20px 0;">اللاعبين (الحد الأدنى: 3)</h3>
-        <input type="text" id="playerNameInput" placeholder="اسم اللاعب" onkeypress="if(event.key==='Enter') addPlayer()">
-        <button class="btn btn-success" onclick="addPlayer()">➕ إضافة لاعب</button>
+        <h1>➕ <span data-t="newSession"></span></h1>
+        <input type="text" id="sessionName" data-placeholder="sessionNamePlaceholder">
+        <h3 style="margin: 20px 0;">👥 <span data-t="playersMin3"></span></h3>
+        <input type="text" id="playerNameInput" data-placeholder="playerNamePlaceholder" onkeypress="if(event.key==='Enter') addPlayer()">
+        <button class="btn btn-success" onclick="addPlayer()">➕ <span data-t="addPlayer"></span></button>
         <div id="playersList"></div>
-        <button class="btn" onclick="createSession()" id="createSessionBtn" disabled>🎮 إنشاء الجلسة</button>
-        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 رجوع</button>
+        <button class="btn" onclick="createSession()" id="createSessionBtn" disabled>🎮 <span data-t="createSession"></span></button>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 <span data-t="back"></span></button>
     </div>
 
     <!-- Session Detail Screen -->
@@ -763,94 +821,67 @@
         <h1 id="sessionTitle"></h1>
         
         <div class="player-management">
-            <h4>👥 إدارة اللاعبين</h4>
-            <input type="text" id="newPlayerInput" placeholder="إضافة لاعب جديد" onkeypress="if(event.key==='Enter') addPlayerToSession()">
-            <button class="btn btn-success btn-small" onclick="addPlayerToSession()">➕ إضافة</button>
+            <h4>👥 <span data-t="managePlayers"></span></h4>
+            <input type="text" id="newPlayerInput" data-placeholder="addNewPlayer" onkeypress="if(event.key==='Enter') addPlayerToSession()">
+            <button class="btn btn-success btn-small" onclick="addPlayerToSession()">➕ <span data-t="add"></span></button>
         </div>
         
         <div id="sessionPlayers"></div>
         
-        <h3 style="margin: 20px 0;">🎯 إعدادات اللعبة</h3>
+        <h3 style="margin: 20px 0;">🎯 <span data-t="gameSettings"></span></h3>
         
-        <!-- Kids Mode Toggle -->
         <div class="toggle-container">
-            <span class="toggle-label">👶 وضع الأطفال (تلميحات مفصلة)</span>
+            <span class="toggle-label">👶 <span data-t="kidsMode"></span></span>
             <label class="toggle-switch">
                 <input type="checkbox" id="kidsMode">
                 <span class="slider"></span>
             </label>
         </div>
         
-        <!-- Show Hints to Imposter Toggle -->
         <div class="toggle-container">
-            <span class="toggle-label">💡 إظهار التلميح للمحتال</span>
+            <span class="toggle-label">💡 <span data-t="showHintToImposter"></span></span>
             <label class="toggle-switch">
                 <input type="checkbox" id="showHintToImposter" checked>
                 <span class="slider"></span>
             </label>
         </div>
         
-        <label>عدد المحتالين:</label>
+        <label data-t="imposterCount"></label>
         <input type="number" id="imposterCount" min="1" value="1">
         
-        <label>الفئة:</label>
-        <select id="categorySelect">
-            <optgroup label="🇸🇾 عربي وسوري">
-                <option value="syrian_food">🍲 أكلات سورية</option>
-                <option value="syrian_places">🏛️ أماكن سورية</option>
-                <option value="arab_culture">🎭 ثقافة عربية</option>
-                <option value="arab_celebrities">⭐ مشاهير عرب</option>
-                <option value="syrian_proverbs">📜 أمثال سورية وشامية</option>
-            </optgroup>
-            <optgroup label="🌍 عام">
-                <option value="animals">🦁 حيوانات</option>
-                <option value="food">🍕 أطعمة</option>
-                <option value="countries">🌍 دول</option>
-                <option value="movies">🎬 أفلام</option>
-                <option value="sports">⚽ رياضة</option>
-                <option value="professions">👨‍⚕️ مهن</option>
-                <option value="places">🏛️ أماكن</option>
-                <option value="objects">📱 أشياء</option>
-            </optgroup>
-            <optgroup label="🔤 English">
-                <option value="english_easy">🔤 English - Easy Words</option>
-                <option value="english_actions">🏃 English - Actions</option>
-                <option value="english_objects">📦 English - Objects</option>
-            </optgroup>
-        </select>
+        <label data-t="category"></label>
+        <select id="categorySelect"></select>
         
-        <label>الوقت لكل لاعب (بالثواني):</label>
+        <label data-t="timerPerPlayer"></label>
         <select id="timerDuration">
-            <option value="0">بدون مؤقت</option>
-            <option value="30">30 ثانية</option>
-            <option value="60" selected>60 ثانية</option>
-            <option value="90">90 ثانية</option>
-            <option value="120">120 ثانية</option>
+            <option value="0" data-t="noTimer"></option>
+            <option value="30">30 <span data-t="seconds"></span></option>
+            <option value="60" selected>60 <span data-t="seconds"></span></option>
+            <option value="90">90 <span data-t="seconds"></span></option>
+            <option value="120">120 <span data-t="seconds"></span></option>
         </select>
         
-        <button class="btn" onclick="startGame()">▶️ بدء اللعبة</button>
-        <button class="btn btn-success" onclick="showGameHistory()">📜 تاريخ الألعاب</button>
-        <button class="btn btn-secondary" onclick="resetSessionScores()">🔄 تصفير نقاط الجلسة</button>
-        <button class="btn btn-danger" onclick="deleteSession()">🗑️ حذف الجلسة</button>
-        <button class="btn btn-secondary" onclick="showScreen('sessionsScreen')">🔙 رجوع</button>
+        <button class="btn" onclick="startGame()">▶️ <span data-t="startGame"></span></button>
+        <button class="btn btn-success" onclick="showGameHistory()">📜 <span data-t="gameHistory"></span></button>
+        <button class="btn btn-secondary" onclick="resetSessionScores()">🔄 <span data-t="resetScores"></span></button>
+        <button class="btn btn-danger" onclick="deleteSession()">🗑️ <span data-t="deleteSession"></span></button>
+        <button class="btn btn-secondary" onclick="showScreen('sessionsScreen')">🔙 <span data-t="back"></span></button>
     </div>
 
     <!-- Game History Screen -->
     <div id="gameHistoryScreen" class="screen">
-        <h1>📜 تاريخ الألعاب</h1>
+        <h1>📜 <span data-t="gameHistory"></span></h1>
         <div id="gameHistoryList"></div>
-        <button class="btn btn-secondary" onclick="backToSession()">🔙 رجوع</button>
+        <button class="btn btn-secondary" onclick="backToSession()">🔙 <span data-t="back"></span></button>
     </div>
 
     <!-- First Player Selection Screen -->
     <div id="firstPlayerScreen" class="screen">
         <div style="text-align: center; padding: 40px 20px;">
-            <h1 style="margin-bottom: 20px;">🎲 من سيبدأ اللعبة؟</h1>
-            <p style="font-size: 18px; color: #666; margin-bottom: 30px;">
-                اضغط على الزر لاختيار من سيأخذ الموبايل أولاً
-            </p>
-            <button class="btn btn-success" onclick="selectFirstPlayer()" id="selectFirstBtn" style="font-size: 24px; padding: 20px;">
-                🎯 اختيار عشوائي
+            <h1 style="margin-bottom: 20px;">🎲 <span data-t="whoStarts"></span></h1>
+            <p style="font-size: 18px; color: #666; margin-bottom: 30px;" data-t="pressToSelect"></p>
+            <button class="btn btn-success" onclick="selectFirstPlayer()" id="selectFirstBtn" style="font-size: 24px;">
+                🎯 <span data-t="randomSelect"></span>
             </button>
             <div id="firstPlayerResult" style="margin-top: 30px;"></div>
         </div>
@@ -860,7 +891,7 @@
     <div id="cardRevealScreen" class="screen">
         <div class="card-reveal">
             <h2 id="currentPlayerName" style="font-size: 28px; margin-bottom: 20px;"></h2>
-            <button class="btn btn-success" id="revealCardBtn" onclick="revealCard()">👁️ اضغط لكشف البطاقة</button>
+            <button class="btn btn-success" id="revealCardBtn" onclick="revealCard()">👁️ <span data-t="pressToReveal"></span></button>
             <div id="cardContainer"></div>
             <div id="nextPlayerBtn"></div>
         </div>
@@ -868,42 +899,35 @@
 
     <!-- Privacy Screen -->
     <div id="privacyScreen" class="privacy-screen">
-        <div class="privacy-content">
-            <div class="privacy-icon">📱</div>
-            <div class="privacy-text">مرر الجهاز إلى:</div>
-            <div class="next-player-name" id="nextPlayerNameDisplay"></div>
-            <div class="privacy-text" style="font-size: 18px; opacity: 0.8; margin-top: 20px;">
-                🙈 الرجاء عدم النظر للشاشة!
-            </div>
-        </div>
+        <div class="privacy-content"></div>
     </div>
 
     <!-- Discussion Screen -->
     <div id="discussionScreen" class="screen">
-        <h1>💬 وقت النقاش</h1>
+        <h1>💬 <span data-t="discussionTime"></span></h1>
         <div class="timer-container" id="timerContainer"></div>
-        <button class="btn" onclick="proceedToVoting()">🗳️ الانتقال للتصويت</button>
+        <button class="btn" onclick="proceedToVoting()">🗳️ <span data-t="goToVoting"></span></button>
     </div>
 
     <!-- Voting Screen -->
     <div id="votingScreen" class="screen">
-        <h1>🗳️ التصويت</h1>
+        <h1>🗳️ <span data-t="voting"></span></h1>
         <div class="voting-turn">
-            <p style="font-size: 18px; color: #666; margin-bottom: 10px;">دور التصويت:</p>
+            <p style="font-size: 18px; color: #666; margin-bottom: 10px;" data-t="votingTurn"></p>
             <div class="current-voter" id="currentVoter"></div>
             <div id="votingInstructions"></div>
         </div>
         <div id="voteGrid" class="vote-grid"></div>
-        <button class="btn" id="submitVoteBtn" onclick="submitCurrentVote()">✅ تأكيد التصويت</button>
+        <button class="btn" id="submitVoteBtn" onclick="submitCurrentVote()">✅ <span data-t="confirmVote"></span></button>
     </div>
 
     <!-- Suspense Screen -->
     <div id="suspenseScreen" class="screen">
         <div class="suspense-container">
-            <h1>🎭 لحظة الحقيقة...</h1>
-            <div class="suspense-text" id="suspenseText">من هو المحتال؟</div>
+            <h1>🎭 <span data-t="momentOfTruth"></span></h1>
+            <div class="suspense-text" id="suspenseText"></div>
             <button class="btn btn-danger" id="revealBtn" onclick="revealImposter()" style="font-size: 24px; padding: 20px;">
-                🔍 كشف المحتال!
+                🔍 <span data-t="revealImposter"></span>
             </button>
         </div>
     </div>
@@ -911,59 +935,610 @@
     <!-- Results Screen -->
     <div id="resultsScreen" class="screen">
         <div class="results-container">
-            <h1>🏆 نتائج اللعبة</h1>
+            <h1>🏆 <span data-t="gameResults"></span></h1>
             <div id="resultsContent"></div>
-            <button class="btn" onclick="playAgain()">🔄 لعبة جديدة</button>
-            <button class="btn btn-danger" onclick="resetCurrentGameScores()">❌ إلغاء نتائج هذه الجولة</button>
-            <button class="btn btn-secondary" onclick="endSession()">🏁 إنهاء الجلسة</button>
+            <button class="btn" onclick="playAgain()">🔄 <span data-t="playAgain"></span></button>
+            <button class="btn btn-danger" onclick="resetCurrentGameScores()">❌ <span data-t="cancelRoundResults"></span></button>
+            <button class="btn btn-secondary" onclick="endSession()">🏁 <span data-t="endSession"></span></button>
         </div>
     </div>
 
     <!-- How to Play Screen -->
     <div id="howToPlayScreen" class="screen">
-        <h1>❓ كيف تلعب؟</h1>
-        <div style="text-align: right; line-height: 2;">
-            <h3>📋 قواعد اللعبة:</h3>
-            <p>1️⃣ اختر عدد المحتالين (1 أو أكثر)</p>
-            <p>2️⃣ كل لاعب يكشف بطاقته بسرية</p>
-            <p>3️⃣ اللاعبون العاديون يرون نفس الكلمة</p>
-            <p>4️⃣ المحتالون يرون التلميح فقط (أو لا شيء)</p>
-            <p>5️⃣ ابدأوا النقاش وحاولوا كشف المحتال</p>
-            <p>6️⃣ كل لاعب يصوت على المشتبه به</p>
-            <p>7️⃣ كشف المحتال في نهاية التصويت!</p>
-            
-            <div class="scoring-rules">
-                <h4>🎯 نظام النقاط:</h4>
-                <p><strong>للمحتال:</strong></p>
-                <p class="positive">• لم يصوت عليه أحد: +30 نقطة</p>
-                <p class="positive">• صوت عليه أقل من النصف: +20 نقطة</p>
-                <p class="negative">• صوت عليه النصف أو أكثر: 0 نقطة</p>
-                <br>
-                <p><strong>للاعب العادي:</strong></p>
-                <p class="positive">• صوت على محتال صحيح: +10 نقاط</p>
-                <p class="negative">• صوت على بريء: -5 نقاط</p>
-                <br>
-                <p><strong>ملاحظة:</strong> المحتال يصوت على شخص واحد فقط (لتمويه نفسه)</p>
-            </div>
-        </div>
-        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 رجوع</button>
+        <h1>❓ <span data-t="howToPlay"></span></h1>
+        <div id="howToPlayContent"></div>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 <span data-t="back"></span></button>
     </div>
 </div>
 
 <!-- Edit Player Modal -->
 <div id="editPlayerModal" class="modal">
     <div class="modal-content">
-        <div class="modal-title">✏️ تعديل اسم اللاعب</div>
-        <input type="text" id="editPlayerInput" placeholder="الاسم الجديد">
+        <div class="modal-title">✏️ <span data-t="editPlayerName"></span></div>
+        <input type="text" id="editPlayerInput" data-placeholder="newName">
         <input type="hidden" id="editPlayerId">
-        <button class="btn btn-success" onclick="savePlayerEdit()">💾 حفظ</button>
-        <button class="btn btn-secondary" onclick="closeEditModal()">❌ إلغاء</button>
+        <button class="btn btn-success" onclick="savePlayerEdit()">💾 <span data-t="save"></span></button>
+        <button class="btn btn-secondary" onclick="closeEditModal()">❌ <span data-t="cancel"></span></button>
     </div>
 </div>
 
-<div id="achievementContainer"></div>
-
 <script>
+    // ===============================
+    // TRANSLATIONS
+    // ===============================
+    const TRANSLATIONS = {
+        ar: {
+            title: "من المحتال؟",
+            subtitle: "اكتشف المحتال بين أصدقائك!",
+            mySessions: "جلساتي",
+            newSession: "جلسة جديدة",
+            howToPlay: "كيف تلعب؟",
+            back: "رجوع",
+            sessionNamePlaceholder: "اسم الجلسة (مثال: سهرة الأصدقاء)",
+            playersMin3: "اللاعبين (الحد الأدنى: 3)",
+            playerNamePlaceholder: "اسم اللاعب",
+            addPlayer: "إضافة لاعب",
+            createSession: "إنشاء الجلسة",
+            managePlayers: "إدارة اللاعبين",
+            addNewPlayer: "إضافة لاعب جديد",
+            add: "إضافة",
+            gameSettings: "إعدادات اللعبة",
+            kidsMode: "وضع الأطفال (تلميحات مفصلة)",
+            showHintToImposter: "إظهار التلميح للمحتال",
+            imposterCount: "عدد المحتالين:",
+            category: "الفئة:",
+            timerPerPlayer: "الوقت لكل لاعب (بالثواني):",
+            noTimer: "بدون مؤقت",
+            seconds: "ثانية",
+            startGame: "بدء اللعبة",
+            gameHistory: "تاريخ الألعاب",
+            resetScores: "تصفير نقاط الجلسة",
+            deleteSession: "حذف الجلسة",
+            whoStarts: "من سيبدأ اللعبة؟",
+            pressToSelect: "اضغط على الزر لاختيار من سيأخذ الموبايل أولاً",
+            randomSelect: "اختيار عشوائي",
+            firstPlayerIs: "اللاعب الأول هو:",
+            passPhoneTo: "سلّم الموبايل لـ",
+            toStartCards: "لبدء كشف البطاقات!",
+            phonePassed: "تم تسليم الموبايل - المتابعة",
+            playerTurn: "دور اللاعب:",
+            pressToReveal: "اضغط لكشف البطاقة",
+            youAreImposter: "أنت المحتال!",
+            noHintForYou: "لا تلميح لك، حاول الاندماج!",
+            hint: "التلميح:",
+            normalPlayer: "لاعب عادي",
+            nextPlayer: "اللاعب التالي",
+            startDiscussion: "بدء النقاش",
+            passDeviceTo: "مرر الجهاز إلى:",
+            dontLook: "الرجاء عدم النظر للشاشة!",
+            imReady: "أنا جاهز!",
+            discussionTime: "وقت النقاش",
+            whoSpeaksFirst: "من سيبدأ الحديث؟",
+            willSpeakFirst: "سيبدأ الحديث!",
+            startTimer: "ابدأ المؤقت",
+            discussAndFind: "ناقشوا واكتشفوا المحتال!",
+            noTimerSet: "(بدون مؤقت)",
+            pause: "إيقاف",
+            resume: "استئناف",
+            add30s: "+30ث",
+            goToVoting: "الانتقال للتصويت",
+            voting: "التصويت",
+            votingTurn: "دور التصويت:",
+            votingTime: "وقت التصويت!",
+            voteForOne: "صوّت على شخص واحد للتمويه",
+            youAreImposterVote: "أنت المحتال!",
+            choose: "اختر",
+            playerYouThink: "لاعب تعتقد أنه المحتال",
+            playersYouThink: "لاعبين تعتقد أنهم محتالين",
+            confirmVote: "تأكيد التصويت",
+            chooseMore: "اختر",
+            morePlayer: "لاعب آخر",
+            morePlayers: "لاعبين آخرين",
+            momentOfTruth: "لحظة الحقيقة...",
+            whoIsImposter: "من هو المحتال؟",
+            didYouCatch: "هل نجحتم في كشفه؟",
+            getReady: "استعدوا للمفاجأة!",
+            decisiveMoment: "اللحظة الحاسمة...",
+            revealImposter: "كشف المحتال!",
+            imposterWas: "المحتال كان...",
+            showResults: "عرض النتائج",
+            gameResults: "نتائج اللعبة",
+            playersWon: "اللاعبون العاديون فازوا! تم كشف المحتالين!",
+            impostersWon: "المحتالون فازوا! نجحوا في الخداع!",
+            theWordWas: "الكلمة كانت:",
+            imposters: "المحتالون:",
+            votesAgainst: "صوت ضده",
+            point: "نقطة",
+            roundScores: "نقاط هذه الجولة:",
+            totalRanking: "الترتيب الإجمالي:",
+            playAgain: "لعبة جديدة",
+            cancelRoundResults: "إلغاء نتائج هذه الجولة",
+            endSession: "إنهاء الجلسة",
+            noSessions: "لا توجد جلسات محفوظة بعد",
+            noHistory: "لا يوجد تاريخ ألعاب بعد",
+            players: "لاعبين",
+            games: "لعبة",
+            game: "لعبة",
+            word: "الكلمة",
+            editPlayerName: "تعديل اسم اللاعب",
+            newName: "الاسم الجديد",
+            save: "حفظ",
+            cancel: "إلغاء",
+            delete: "حذف",
+            edit: "تعديل",
+            enterPlayerName: "الرجاء إدخال اسم اللاعب",
+            playerExists: "اسم اللاعب موجود مسبقاً",
+            enterSessionName: "الرجاء إدخال اسم الجلسة",
+            min3Players: "يجب إضافة 3 لاعبين على الأقل",
+            cantDeleteMin: "لا يمكن حذف أكثر، يجب أن يبقى 3 لاعبين على الأقل",
+            confirmDelete: "هل أنت متأكد من حذف هذا اللاعب؟",
+            confirmDeleteSession: "هل أنت متأكد من حذف هذه الجلسة؟",
+            confirmResetScores: "هل أنت متأكد من تصفير جميع نقاط اللاعبين في هذه الجلسة؟",
+            scoresReset: "تم تصفير جميع النقاط بنجاح! ✅",
+            confirmCancelRound: "هل أنت متأكد من إلغاء نتائج هذه الجولة؟",
+            roundCancelled: "تم إلغاء نتائج هذه الجولة! ✅",
+            tooManyImposters: "عدد المحتالين يجب أن يكون أقل من عدد اللاعبين",
+            noCategoryWords: "لا توجد كلمات في هذه الفئة",
+            canOnlyChoose: "يمكنك اختيار",
+            playerOnly: "لاعب فقط",
+            playersOnly: "لاعبين فقط",
+            pleaseChoose: "الرجاء اختيار",
+            noOneDoubtedYou: "لم يشك بك أحد!",
+            fewDoubtedYou: "شك بك القليل فقط",
+            youWereCaught: "تم كشفك!",
+            correctVoteOnImposter: "صوت صحيح على محتال",
+            wrongVoteOnInnocent: "صوت خاطئ على بريء",
+            playersAndScores: "اللاعبون والنقاط:",
+            cardRevealFor: "دور كشف البطاقة لـ:",
+            everyoneSawCards: "الجميع شاهدوا بطاقاتهم!",
+            
+            // Categories
+            cat_syrian_food: "🍲 أكلات سورية",
+            cat_syrian_places: "🏛️ أماكن سورية",
+            cat_arab_culture: "🎭 ثقافة عربية",
+            cat_arab_celebrities: "⭐ مشاهير عرب",
+            cat_syrian_proverbs: "📜 أمثال سورية وشامية",
+            cat_animals: "🦁 حيوانات",
+            cat_food: "🍕 أطعمة",
+            cat_countries: "🌍 دول",
+            cat_movies: "🎬 أفلام",
+            cat_sports: "⚽ رياضة",
+            cat_professions: "👨‍⚕️ مهن",
+            cat_places: "🏛️ أماكن",
+            cat_objects: "📱 أشياء",
+            cat_english_easy: "🔤 كلمات سهلة",
+            cat_english_actions: "🏃 أفعال",
+            cat_english_objects: "📦 أشياء",
+            
+            // How to play
+            howToPlayContent: `
+                <div style="text-align: right; line-height: 2;">
+                    <h3>📋 قواعد اللعبة:</h3>
+                    <p>1️⃣ اختر عدد المحتالين (1 أو أكثر)</p>
+                    <p>2️⃣ كل لاعب يكشف بطاقته بسرية</p>
+                    <p>3️⃣ اللاعبون العاديون يرون نفس الكلمة</p>
+                    <p>4️⃣ المحتالون يرون التلميح فقط (أو لا شيء)</p>
+                    <p>5️⃣ ابدأوا النقاش وحاولوا كشف المحتال</p>
+                    <p>6️⃣ كل لاعب يصوت على المشتبه به</p>
+                    <p>7️⃣ كشف المحتال في نهاية التصويت!</p>
+                    
+                    <div class="scoring-rules">
+                        <h4>🎯 نظام النقاط:</h4>
+                        <p><strong>للمحتال:</strong></p>
+                        <p class="positive">• لم يصوت عليه أحد: +30 نقطة</p>
+                        <p class="positive">• صوت عليه أقل من النصف: +20 نقطة</p>
+                        <p class="negative">• صوت عليه النصف أو أكثر: 0 نقطة</p>
+                        <br>
+                        <p><strong>للاعب العادي:</strong></p>
+                        <p class="positive">• صوت على محتال صحيح: +10 نقاط</p>
+                        <p class="negative">• صوت على بريء: -5 نقاط</p>
+                        <br>
+                        <p><strong>ملاحظة:</strong> المحتال يصوت على شخص واحد فقط (للتمويه)</p>
+                    </div>
+                </div>
+            `
+        },
+        en: {
+            title: "Who is the Imposter?",
+            subtitle: "Find the imposter among your friends!",
+            mySessions: "My Sessions",
+            newSession: "New Session",
+            howToPlay: "How to Play?",
+            back: "Back",
+            sessionNamePlaceholder: "Session name (e.g., Game Night)",
+            playersMin3: "Players (minimum: 3)",
+            playerNamePlaceholder: "Player name",
+            addPlayer: "Add Player",
+            createSession: "Create Session",
+            managePlayers: "Manage Players",
+            addNewPlayer: "Add new player",
+            add: "Add",
+            gameSettings: "Game Settings",
+            kidsMode: "Kids Mode (detailed hints)",
+            showHintToImposter: "Show hint to imposter",
+            imposterCount: "Number of imposters:",
+            category: "Category:",
+            timerPerPlayer: "Time per player (seconds):",
+            noTimer: "No timer",
+            seconds: "seconds",
+            startGame: "Start Game",
+            gameHistory: "Game History",
+            resetScores: "Reset Session Scores",
+            deleteSession: "Delete Session",
+            whoStarts: "Who will start?",
+            pressToSelect: "Press the button to randomly select who gets the phone first",
+            randomSelect: "Random Select",
+            firstPlayerIs: "First player is:",
+            passPhoneTo: "Pass the phone to",
+            toStartCards: "to start revealing cards!",
+            phonePassed: "Phone passed - Continue",
+            playerTurn: "Player's turn:",
+            pressToReveal: "Press to reveal card",
+            youAreImposter: "You are the Imposter!",
+            noHintForYou: "No hint for you, try to blend in!",
+            hint: "Hint:",
+            normalPlayer: "Normal Player",
+            nextPlayer: "Next Player",
+            startDiscussion: "Start Discussion",
+            passDeviceTo: "Pass device to:",
+            dontLook: "Please don't look at the screen!",
+            imReady: "I'm ready!",
+            discussionTime: "Discussion Time",
+            whoSpeaksFirst: "Who speaks first?",
+            willSpeakFirst: "will speak first!",
+            startTimer: "Start Timer",
+            discussAndFind: "Discuss and find the imposter!",
+            noTimerSet: "(No timer)",
+            pause: "Pause",
+            resume: "Resume",
+            add30s: "+30s",
+            goToVoting: "Go to Voting",
+            voting: "Voting",
+            votingTurn: "Voting turn:",
+            votingTime: "Voting time!",
+            voteForOne: "Vote for one person to blend in",
+            youAreImposterVote: "You're the imposter!",
+            choose: "Choose",
+            playerYouThink: "player you think is the imposter",
+            playersYouThink: "players you think are imposters",
+            confirmVote: "Confirm Vote",
+            chooseMore: "Choose",
+            morePlayer: "more player",
+            morePlayers: "more players",
+            momentOfTruth: "Moment of truth...",
+            whoIsImposter: "Who is the imposter?",
+            didYouCatch: "Did you catch them?",
+            getReady: "Get ready for the reveal!",
+            decisiveMoment: "The decisive moment...",
+            revealImposter: "Reveal Imposter!",
+            imposterWas: "The imposter was...",
+            showResults: "Show Results",
+            gameResults: "Game Results",
+            playersWon: "Regular players won! Imposters caught!",
+            impostersWon: "Imposters won! They fooled everyone!",
+            theWordWas: "The word was:",
+            imposters: "Imposters:",
+            votesAgainst: "votes against",
+            point: "points",
+            roundScores: "Round Scores:",
+            totalRanking: "Total Ranking:",
+            playAgain: "Play Again",
+            cancelRoundResults: "Cancel Round Results",
+            endSession: "End Session",
+            noSessions: "No saved sessions yet",
+            noHistory: "No game history yet",
+            players: "players",
+            games: "games",
+            game: "Game",
+            word: "Word",
+            editPlayerName: "Edit Player Name",
+            newName: "New name",
+            save: "Save",
+            cancel: "Cancel",
+            delete: "Delete",
+            edit: "Edit",
+            enterPlayerName: "Please enter player name",
+            playerExists: "Player name already exists",
+            enterSessionName: "Please enter session name",
+            min3Players: "You need at least 3 players",
+            cantDeleteMin: "Can't delete, minimum 3 players required",
+            confirmDelete: "Are you sure you want to delete this player?",
+            confirmDeleteSession: "Are you sure you want to delete this session?",
+            confirmResetScores: "Are you sure you want to reset all scores in this session?",
+            scoresReset: "All scores have been reset! ✅",
+            confirmCancelRound: "Are you sure you want to cancel this round's results?",
+            roundCancelled: "Round results cancelled! ✅",
+            tooManyImposters: "Number of imposters must be less than number of players",
+            noCategoryWords: "No words in this category",
+            canOnlyChoose: "You can only choose",
+            playerOnly: "player",
+            playersOnly: "players",
+            pleaseChoose: "Please choose",
+            noOneDoubtedYou: "No one suspected you!",
+            fewDoubtedYou: "Only a few suspected you",
+            youWereCaught: "You were caught!",
+            correctVoteOnImposter: "Correct vote on imposter",
+            wrongVoteOnInnocent: "Wrong vote on innocent",
+            playersAndScores: "Players and Scores:",
+            cardRevealFor: "Card reveal for:",
+            everyoneSawCards: "Everyone saw their cards!",
+            
+            // Categories
+            cat_syrian_food: "🍲 Syrian Food",
+            cat_syrian_places: "🏛️ Syrian Places",
+            cat_arab_culture: "🎭 Arab Culture",
+            cat_arab_celebrities: "⭐ Arab Celebrities",
+            cat_syrian_proverbs: "📜 Syrian Proverbs",
+            cat_animals: "🦁 Animals",
+            cat_food: "🍕 Food",
+            cat_countries: "🌍 Countries",
+            cat_movies: "🎬 Movies",
+            cat_sports: "⚽ Sports",
+            cat_professions: "👨‍⚕️ Professions",
+            cat_places: "🏛️ Places",
+            cat_objects: "📱 Objects",
+            cat_english_easy: "🔤 Easy Words",
+            cat_english_actions: "🏃 Actions",
+            cat_english_objects: "📦 Objects",
+            
+            // How to play
+            howToPlayContent: `
+                <div style="text-align: left; line-height: 2;">
+                    <h3>📋 Game Rules:</h3>
+                    <p>1️⃣ Choose number of imposters (1 or more)</p>
+                    <p>2️⃣ Each player secretly reveals their card</p>
+                    <p>3️⃣ Regular players see the same word</p>
+                    <p>4️⃣ Imposters only see a hint (or nothing)</p>
+                    <p>5️⃣ Start discussing and try to find the imposter</p>
+                    <p>6️⃣ Each player votes for who they suspect</p>
+                    <p>7️⃣ Reveal the imposter at the end!</p>
+                    
+                    <div class="scoring-rules">
+                        <h4>🎯 Scoring System:</h4>
+                        <p><strong>For Imposter:</strong></p>
+                        <p class="positive">• No one voted against: +30 points</p>
+                        <p class="positive">• Less than half voted against: +20 points</p>
+                        <p class="negative">• Half or more voted against: 0 points</p>
+                        <br>
+                        <p><strong>For Regular Player:</strong></p>
+                        <p class="positive">• Voted for an imposter: +10 points</p>
+                        <p class="negative">• Voted for innocent: -5 points</p>
+                        <br>
+                        <p><strong>Note:</strong> Imposter votes for only one person (to blend in)</p>
+                    </div>
+                </div>
+            `
+        }
+    };
+
+    // ===============================
+    // WORD DATABASE
+    // ===============================
+    const WORDS = {
+        syrian_food: [
+            { word: "كبة", wordEn: "Kibbeh", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "أكلة مقرمشة فيها لحمة وبرغل", kidsHintEn: "Crunchy dish with meat and bulgur" },
+            { word: "شاورما", wordEn: "Shawarma", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "لحمة مشوية على سيخ كبير", kidsHintEn: "Grilled meat on a big skewer" },
+            { word: "فلافل", wordEn: "Falafel", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "كرات مقلية خضراء من الحمص", kidsHintEn: "Fried green balls made from chickpeas" },
+            { word: "تبولة", wordEn: "Tabbouleh", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "سلطة خضراء فيها بقدونس وبرغل", kidsHintEn: "Green salad with parsley and bulgur" },
+            { word: "حمص", wordEn: "Hummus", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "معجون كريمي نأكله مع الخبز", kidsHintEn: "Creamy paste eaten with bread" },
+            { word: "كنافة", wordEn: "Kunafa", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "حلوى برتقالية فيها جبنة وقطر", kidsHintEn: "Orange dessert with cheese and syrup" },
+            { word: "بقلاوة", wordEn: "Baklava", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "حلوى طبقات رقيقة فيها فستق", kidsHintEn: "Layered pastry with pistachios" }
+        ],
+        
+        syrian_places: [
+            { word: "دمشق", wordEn: "Damascus", hint: "مكان في سوريا", hintEn: "Place in Syria", kidsHint: "أقدم عاصمة في العالم", kidsHintEn: "The oldest capital in the world" },
+            { word: "حلب", wordEn: "Aleppo", hint: "مكان في سوريا", hintEn: "Place in Syria", kidsHint: "أكبر مدينة في سوريا", kidsHintEn: "The largest city in Syria" },
+            { word: "تدمر", wordEn: "Palmyra", hint: "مكان في سوريا", hintEn: "Place in Syria", kidsHint: "مدينة أثرية قديمة في الصحراء", kidsHintEn: "Ancient city in the desert" }
+        ],
+        
+        arab_culture: [
+            { word: "عود", wordEn: "Oud", hint: "شيء يُستخدم", hintEn: "Something used", kidsHint: "آلة موسيقية عربية", kidsHintEn: "Arabic musical instrument" },
+            { word: "دبكة", wordEn: "Dabke", hint: "نشاط جماعي", hintEn: "Group activity", kidsHint: "رقصة جماعية عربية", kidsHintEn: "Traditional Arabic group dance" },
+            { word: "فانوس", wordEn: "Lantern", hint: "شيء يُستخدم", hintEn: "Something used", kidsHint: "مصباح رمضان", kidsHintEn: "Ramadan lamp" }
+        ],
+        
+        arab_celebrities: [
+            { word: "فيروز", wordEn: "Fairuz", hint: "شخص مشهور", hintEn: "Famous person", kidsHint: "مطربة لبنانية", kidsHintEn: "Lebanese singer" },
+            { word: "محمد صلاح", wordEn: "Mohamed Salah", hint: "شخص مشهور", hintEn: "Famous person", kidsHint: "لاعب كرة قدم مصري", kidsHintEn: "Egyptian football player" }
+        ],
+        
+        syrian_proverbs: [
+            { word: "القرد بعين أمه غزال", wordEn: "Beauty is in the eye of the beholder", hint: "قول شعبي", hintEn: "Proverb", kidsHint: "مثل عن حب الأم", kidsHintEn: "Proverb about a mother's love" },
+            { word: "الصبر مفتاح الفرج", wordEn: "Patience is the key", hint: "قول شعبي", hintEn: "Proverb", kidsHint: "مثل عن الصبر", kidsHintEn: "Proverb about patience" }
+        ],
+        
+        animals: [
+            { word: "أسد", wordEn: "Lion", hint: "كائن حي", hintEn: "Living thing", kidsHint: "ملك الغابة", kidsHintEn: "King of the jungle" },
+            { word: "زرافة", wordEn: "Giraffe", hint: "كائن حي", hintEn: "Living thing", kidsHint: "حيوان برقبة طويلة", kidsHintEn: "Animal with a long neck" },
+            { word: "فيل", wordEn: "Elephant", hint: "كائن حي", hintEn: "Living thing", kidsHint: "حيوان ضخم له خرطوم", kidsHintEn: "Big animal with a trunk" },
+            { word: "دولفين", wordEn: "Dolphin", hint: "كائن حي", hintEn: "Living thing", kidsHint: "حيوان بحري ذكي", kidsHintEn: "Smart sea animal" },
+            { word: "بطريق", wordEn: "Penguin", hint: "كائن حي", hintEn: "Living thing", kidsHint: "طائر لا يطير يحب البرد", kidsHintEn: "Bird that doesn't fly and loves cold" },
+            { word: "قرد", wordEn: "Monkey", hint: "كائن حي", hintEn: "Living thing", kidsHint: "يحب الموز ويتسلق", kidsHintEn: "Loves bananas and climbs trees" },
+            { word: "نمر", wordEn: "Tiger", hint: "كائن حي", hintEn: "Living thing", kidsHint: "له خطوط برتقالية وسوداء", kidsHintEn: "Has orange and black stripes" },
+            { word: "سلحفاة", wordEn: "Turtle", hint: "كائن حي", hintEn: "Living thing", kidsHint: "بطيء ويحمل بيته", kidsHintEn: "Slow and carries its house" }
+        ],
+        
+        food: [
+            { word: "بيتزا", wordEn: "Pizza", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "دائرية فيها جبن وطماطم", kidsHintEn: "Round with cheese and tomato" },
+            { word: "برجر", wordEn: "Burger", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "لحم في خبز دائري", kidsHintEn: "Meat in a round bun" },
+            { word: "آيس كريم", wordEn: "Ice Cream", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "حلوى باردة تذوب", kidsHintEn: "Cold treat that melts" },
+            { word: "شوكولاتة", wordEn: "Chocolate", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "حلوى بنية حلوة", kidsHintEn: "Sweet brown candy" },
+            { word: "موز", wordEn: "Banana", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "فاكهة صفراء طويلة", kidsHintEn: "Long yellow fruit" },
+            { word: "تفاح", wordEn: "Apple", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "فاكهة حمراء أو خضراء", kidsHintEn: "Red or green fruit" },
+            { word: "فشار", wordEn: "Popcorn", hint: "شيء يؤكل", hintEn: "Something eaten", kidsHint: "ناكله في السينما", kidsHintEn: "We eat it at the movies" }
+        ],
+        
+        countries: [
+            { word: "مصر", wordEn: "Egypt", hint: "دولة", hintEn: "Country", kidsHint: "فيها الأهرامات", kidsHintEn: "Has the pyramids" },
+            { word: "اليابان", wordEn: "Japan", hint: "دولة", hintEn: "Country", kidsHint: "بلد الأنمي والسوشي", kidsHintEn: "Land of anime and sushi" },
+            { word: "فرنسا", wordEn: "France", hint: "دولة", hintEn: "Country", kidsHint: "فيها برج إيفل", kidsHintEn: "Has the Eiffel Tower" },
+            { word: "البرازيل", wordEn: "Brazil", hint: "دولة", hintEn: "Country", kidsHint: "مشهورة بكرة القدم", kidsHintEn: "Famous for football" },
+            { word: "كندا", wordEn: "Canada", hint: "دولة", hintEn: "Country", kidsHint: "بلد بارد كبير", kidsHintEn: "Big cold country" }
+        ],
+        
+        movies: [
+            { word: "الأسد الملك", wordEn: "The Lion King", hint: "عمل فني", hintEn: "Movie", kidsHint: "فيلم عن أسد صغير اسمه سيمبا", kidsHintEn: "Movie about a lion cub named Simba" },
+            { word: "فروزن", wordEn: "Frozen", hint: "عمل فني", hintEn: "Movie", kidsHint: "فيلم عن أميرة الثلج", kidsHintEn: "Movie about an ice princess" },
+            { word: "سبايدرمان", wordEn: "Spider-Man", hint: "عمل فني", hintEn: "Movie", kidsHint: "بطل يطلق خيوط العنكبوت", kidsHintEn: "Hero who shoots spider webs" },
+            { word: "نيمو", wordEn: "Finding Nemo", hint: "عمل فني", hintEn: "Movie", kidsHint: "سمكة برتقالية صغيرة", kidsHintEn: "Small orange fish" }
+        ],
+        
+        sports: [
+            { word: "كرة القدم", wordEn: "Football/Soccer", hint: "رياضة", hintEn: "Sport", kidsHint: "نركل الكرة بالقدم", kidsHintEn: "We kick the ball with our feet" },
+            { word: "كرة السلة", wordEn: "Basketball", hint: "رياضة", hintEn: "Sport", kidsHint: "نرمي الكرة في سلة عالية", kidsHintEn: "We throw the ball into a high basket" },
+            { word: "السباحة", wordEn: "Swimming", hint: "رياضة", hintEn: "Sport", kidsHint: "نتحرك في الماء", kidsHintEn: "We move in water" },
+            { word: "التنس", wordEn: "Tennis", hint: "رياضة", hintEn: "Sport", kidsHint: "نضرب كرة صغيرة بمضرب", kidsHintEn: "We hit a small ball with a racket" }
+        ],
+        
+        professions: [
+            { word: "طبيب", wordEn: "Doctor", hint: "مهنة", hintEn: "Job", kidsHint: "يعالج المرضى", kidsHintEn: "Treats sick people" },
+            { word: "معلم", wordEn: "Teacher", hint: "مهنة", hintEn: "Job", kidsHint: "يعلم الأطفال", kidsHintEn: "Teaches children" },
+            { word: "طيار", wordEn: "Pilot", hint: "مهنة", hintEn: "Job", kidsHint: "يقود الطائرة", kidsHintEn: "Flies the airplane" },
+            { word: "رجل إطفاء", wordEn: "Firefighter", hint: "مهنة", hintEn: "Job", kidsHint: "يطفئ الحريق", kidsHintEn: "Puts out fires" },
+            { word: "شرطي", wordEn: "Police Officer", hint: "مهنة", hintEn: "Job", kidsHint: "يحمي الناس", kidsHintEn: "Protects people" }
+        ],
+        
+        places: [
+            { word: "مدرسة", wordEn: "School", hint: "مكان", hintEn: "Place", kidsHint: "نتعلم فيها", kidsHintEn: "Where we learn" },
+            { word: "مستشفى", wordEn: "Hospital", hint: "مكان", hintEn: "Place", kidsHint: "نذهب للعلاج", kidsHintEn: "We go to get treated" },
+            { word: "حديقة", wordEn: "Park", hint: "مكان", hintEn: "Place", kidsHint: "نلعب فيها", kidsHintEn: "Where we play" },
+            { word: "شاطئ", wordEn: "Beach", hint: "مكان", hintEn: "Place", kidsHint: "رمل وبحر", kidsHintEn: "Sand and sea" },
+            { word: "سينما", wordEn: "Cinema", hint: "مكان", hintEn: "Place", kidsHint: "نشاهد الأفلام", kidsHintEn: "We watch movies" }
+        ],
+        
+        objects: [
+            { word: "هاتف", wordEn: "Phone", hint: "شيء", hintEn: "Object", kidsHint: "نتكلم فيه ونلعب", kidsHintEn: "We talk and play on it" },
+            { word: "سيارة", wordEn: "Car", hint: "شيء", hintEn: "Object", kidsHint: "تنقلنا على الطريق", kidsHintEn: "Takes us on the road" },
+            { word: "كتاب", wordEn: "Book", hint: "شيء", hintEn: "Object", kidsHint: "نقرأ فيه قصص", kidsHintEn: "We read stories in it" },
+            { word: "ساعة", wordEn: "Watch/Clock", hint: "شيء", hintEn: "Object", kidsHint: "تخبرنا الوقت", kidsHintEn: "Tells us the time" },
+            { word: "تلفزيون", wordEn: "Television", hint: "شيء", hintEn: "Object", kidsHint: "نشاهد فيه الكرتون", kidsHintEn: "We watch cartoons on it" }
+        ],
+        
+        english_easy: [
+            { word: "Cat", wordEn: "Cat", hint: "Living thing", hintEn: "Living thing", kidsHint: "Says meow", kidsHintEn: "Says meow" },
+            { word: "Dog", wordEn: "Dog", hint: "Living thing", hintEn: "Living thing", kidsHint: "Man's best friend", kidsHintEn: "Man's best friend" },
+            { word: "Sun", wordEn: "Sun", hint: "In nature", hintEn: "In nature", kidsHint: "Bright and hot in the sky", kidsHintEn: "Bright and hot in the sky" },
+            { word: "Moon", wordEn: "Moon", hint: "In nature", hintEn: "In nature", kidsHint: "Shines at night", kidsHintEn: "Shines at night" },
+            { word: "Tree", wordEn: "Tree", hint: "In nature", hintEn: "In nature", kidsHint: "Has leaves and branches", kidsHintEn: "Has leaves and branches" },
+            { word: "House", wordEn: "House", hint: "Place", hintEn: "Place", kidsHint: "Where families live", kidsHintEn: "Where families live" },
+            { word: "Ball", wordEn: "Ball", hint: "Object", hintEn: "Object", kidsHint: "Round, we throw and catch it", kidsHintEn: "Round, we throw and catch it" },
+            { word: "Water", wordEn: "Water", hint: "Thing", hintEn: "Thing", kidsHint: "We drink it when thirsty", kidsHintEn: "We drink it when thirsty" }
+        ],
+        
+        english_actions: [
+            { word: "Running", wordEn: "Running", hint: "Action", hintEn: "Action", kidsHint: "Moving legs fast", kidsHintEn: "Moving legs fast" },
+            { word: "Swimming", wordEn: "Swimming", hint: "Action", hintEn: "Action", kidsHint: "Moving in water", kidsHintEn: "Moving in water" },
+            { word: "Dancing", wordEn: "Dancing", hint: "Action", hintEn: "Action", kidsHint: "Moving to music", kidsHintEn: "Moving to music" },
+            { word: "Sleeping", wordEn: "Sleeping", hint: "Action", hintEn: "Action", kidsHint: "Eyes closed, resting", kidsHintEn: "Eyes closed, resting" },
+            { word: "Eating", wordEn: "Eating", hint: "Action", hintEn: "Action", kidsHint: "Putting food in mouth", kidsHintEn: "Putting food in mouth" },
+            { word: "Reading", wordEn: "Reading", hint: "Action", hintEn: "Action", kidsHint: "Looking at words in a book", kidsHintEn: "Looking at words in a book" }
+        ],
+        
+        english_objects: [
+            { word: "Umbrella", wordEn: "Umbrella", hint: "Object", hintEn: "Object", kidsHint: "Keeps you dry in rain", kidsHintEn: "Keeps you dry in rain" },
+            { word: "Bicycle", wordEn: "Bicycle", hint: "Object", hintEn: "Object", kidsHint: "Two wheels, you pedal it", kidsHintEn: "Two wheels, you pedal it" },
+            { word: "Camera", wordEn: "Camera", hint: "Object", hintEn: "Object", kidsHint: "Takes pictures", kidsHintEn: "Takes pictures" },
+            { word: "Balloon", wordEn: "Balloon", hint: "Object", hintEn: "Object", kidsHint: "Filled with air, floats up", kidsHintEn: "Filled with air, floats up" },
+            { word: "Key", wordEn: "Key", hint: "Object", hintEn: "Object", kidsHint: "Opens doors", kidsHintEn: "Opens doors" }
+        ]
+    };
+
+    // ===============================
+    // GLOBAL STATE
+    // ===============================
+    let currentLang = 'ar';
+    let currentSession = null;
+    let currentGame = null;
+    let players = [];
+    let currentPlayerIndex = 0;
+    let currentVoterIndex = 0;
+    let allVotes = [];
+    let currentVotes = [];
+    let timerInterval = null;
+    let selectedFirstPlayerIndex = -1;
+
+    // ===============================
+    // LANGUAGE FUNCTIONS
+    // ===============================
+    function setLanguage(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+        document.body.classList.toggle('en', lang === 'en');
+        
+        // Update language buttons
+        document.getElementById('langAr').classList.toggle('active', lang === 'ar');
+        document.getElementById('langEn').classList.toggle('active', lang === 'en');
+        
+        // Update all translations
+        updateTranslations();
+        updateCategorySelect();
+        
+        // Save preference
+        localStorage.setItem('imposterGameLang', lang);
+        
+        // Show home screen if on language screen
+        if (document.getElementById('langScreen').classList.contains('active')) {
+            showScreen('homeScreen');
+        }
+    }
+
+    function t(key) {
+        return TRANSLATIONS[currentLang][key] || key;
+    }
+
+    function updateTranslations() {
+        // Update all elements with data-t attribute
+        document.querySelectorAll('[data-t]').forEach(el => {
+            const key = el.getAttribute('data-t');
+            if (TRANSLATIONS[currentLang][key]) {
+                el.textContent = TRANSLATIONS[currentLang][key];
+            }
+        });
+        
+        // Update placeholders
+        document.querySelectorAll('[data-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-placeholder');
+            if (TRANSLATIONS[currentLang][key]) {
+                el.placeholder = TRANSLATIONS[currentLang][key];
+            }
+        });
+        
+        // Update how to play content
+        const howToPlayContent = document.getElementById('howToPlayContent');
+        if (howToPlayContent) {
+            howToPlayContent.innerHTML = t('howToPlayContent');
+        }
+    }
+
+    function updateCategorySelect() {
+        const select = document.getElementById('categorySelect');
+        select.innerHTML = `
+            <optgroup label="${currentLang === 'ar' ? '🇸🇾 عربي وسوري' : '🇸🇾 Arabic & Syrian'}">
+                <option value="syrian_food">${t('cat_syrian_food')}</option>
+                <option value="syrian_places">${t('cat_syrian_places')}</option>
+                <option value="arab_culture">${t('cat_arab_culture')}</option>
+                <option value="arab_celebrities">${t('cat_arab_celebrities')}</option>
+                <option value="syrian_proverbs">${t('cat_syrian_proverbs')}</option>
+            </optgroup>
+            <optgroup label="${currentLang === 'ar' ? '🌍 عام' : '🌍 General'}">
+                <option value="animals">${t('cat_animals')}</option>
+                <option value="food">${t('cat_food')}</option>
+                <option value="countries">${t('cat_countries')}</option>
+                <option value="movies">${t('cat_movies')}</option>
+                <option value="sports">${t('cat_sports')}</option>
+                <option value="professions">${t('cat_professions')}</option>
+                <option value="places">${t('cat_places')}</option>
+                <option value="objects">${t('cat_objects')}</option>
+            </optgroup>
+            <optgroup label="${currentLang === 'ar' ? '🔤 English' : '🔤 English'}">
+                <option value="english_easy">${t('cat_english_easy')}</option>
+                <option value="english_actions">${t('cat_english_actions')}</option>
+                <option value="english_objects">${t('cat_english_objects')}</option>
+            </optgroup>
+        `;
+    }
+
     // ===============================
     // AUDIO SYSTEM
     // ===============================
@@ -975,9 +1550,7 @@
                 if (!this.audioContext) {
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            } catch(e) {
-                console.log('Audio not supported');
-            }
+            } catch(e) {}
         },
         
         playAlert() {
@@ -1070,326 +1643,7 @@
     };
 
     // ===============================
-    // WORD DATABASE - UPDATED WITH GENERAL HINTS
-    // ===============================
-    const WORDS = {
-        // Syrian Food
-        syrian_food: [
-            { word: "كبة", hint: "شيء يؤكل", kidsHint: "أكلة مقرمشة فيها لحمة وبرغل شكلها بيضاوي" },
-            { word: "فتة", hint: "شيء يؤكل", kidsHint: "أكلة فيها خبز وحمص ولبن" },
-            { word: "شاورما", hint: "شيء يؤكل", kidsHint: "لحمة مشوية على سيخ كبير نضعها في الخبز" },
-            { word: "فلافل", hint: "شيء يؤكل", kidsHint: "كرات مقلية خضراء من الحمص" },
-            { word: "تبولة", hint: "شيء يؤكل", kidsHint: "سلطة خضراء فيها بقدونس وبرغل" },
-            { word: "فتوش", hint: "شيء يؤكل", kidsHint: "سلطة فيها خبز محمص وخضار كثير" },
-            { word: "ورق عنب", hint: "شيء يؤكل", kidsHint: "أوراق خضراء ملفوفة فيها رز ولحمة" },
-            { word: "محاشي", hint: "شيء يؤكل", kidsHint: "كوسا أو باذنجان محشي بالرز واللحمة" },
-            { word: "مناقيش", hint: "شيء يؤكل", kidsHint: "خبز مع زعتر وزيت ناكله في الصباح" },
-            { word: "حمص", hint: "شيء يؤكل", kidsHint: "معجون كريمي نأكله مع الخبز" },
-            { word: "متبل", hint: "شيء يؤكل", kidsHint: "معجون من الباذنجان المشوي" },
-            { word: "لبنة", hint: "شيء يؤكل", kidsHint: "لبن كثيف أبيض ناكله مع زيت الزيتون" },
-            { word: "شيش طاووق", hint: "شيء يؤكل", kidsHint: "قطع دجاج مشوية على السيخ" },
-            { word: "مجدرة", hint: "شيء يؤكل", kidsHint: "أكلة من العدس والبرغل والبصل المقلي" },
-            { word: "كنافة", hint: "شيء يؤكل", kidsHint: "حلوى برتقالية فيها جبنة وقطر حلو" },
-            { word: "بقلاوة", hint: "شيء يؤكل", kidsHint: "حلوى طبقات رقيقة فيها فستق" },
-            { word: "معمول", hint: "شيء يؤكل", kidsHint: "كعك محشي بالتمر أو الجوز ناكله في العيد" },
-            { word: "قطايف", hint: "شيء يؤكل", kidsHint: "حلوى رمضان محشية بالقشطة أو الجوز" },
-            { word: "عوامة", hint: "شيء يؤكل", kidsHint: "كرات صغيرة مقلية مع القطر" },
-            { word: "مهلبية", hint: "شيء يؤكل", kidsHint: "حلوى بيضاء كريمية باردة" }
-        ],
-        
-        // Syrian Places
-        syrian_places: [
-            { word: "الجامع الأموي", hint: "مكان في سوريا", kidsHint: "أقدم وأكبر جامع في دمشق القديمة" },
-            { word: "سوق الحميدية", hint: "مكان في سوريا", kidsHint: "سوق مسقوف كبير في دمشق فيه محلات كثيرة" },
-            { word: "قلعة حلب", hint: "مكان في سوريا", kidsHint: "قلعة كبيرة قديمة على تلة في حلب" },
-            { word: "تدمر", hint: "مكان في سوريا", kidsHint: "مدينة أثرية قديمة في الصحراء" },
-            { word: "حلب", hint: "مكان في سوريا", kidsHint: "أكبر مدينة في سوريا" },
-            { word: "اللاذقية", hint: "مكان في سوريا", kidsHint: "مدينة على البحر فيها ميناء" },
-            { word: "حمص", hint: "مكان في سوريا", kidsHint: "مدينة في وسط سوريا" },
-            { word: "حماة", hint: "مكان في سوريا", kidsHint: "مدينة فيها نواعير على نهر العاصي" },
-            { word: "جبل قاسيون", hint: "مكان في سوريا", kidsHint: "جبل كبير يطل على مدينة دمشق" },
-            { word: "الغوطة", hint: "مكان في سوريا", kidsHint: "منطقة خضراء فيها بساتين حول دمشق" },
-            { word: "باب توما", hint: "مكان في سوريا", kidsHint: "حي قديم في دمشق" },
-            { word: "المرجة", hint: "مكان في سوريا", kidsHint: "ساحة كبيرة في وسط دمشق" },
-            { word: "كسب", hint: "مكان في سوريا", kidsHint: "قرية جبلية خضراء فيها غابات" },
-            { word: "صيدنايا", hint: "مكان في سوريا", kidsHint: "قرية فيها دير مشهور قديم" },
-            { word: "معلولا", hint: "مكان في سوريا", kidsHint: "قرية قديمة ناسها يتكلمون لغة قديمة" }
-        ],
-        
-        // Arab Culture
-        arab_culture: [
-            { word: "عود", hint: "شيء يُستخدم", kidsHint: "آلة موسيقية عربية بأوتار" },
-            { word: "طربوش", hint: "شيء يُلبس", kidsHint: "قبعة حمراء كان يلبسها العرب قديماً" },
-            { word: "كوفية", hint: "شيء يُلبس", kidsHint: "قماش يوضع على الرأس أبيض وأسود" },
-            { word: "جلابية", hint: "شيء يُلبس", kidsHint: "ثوب طويل فضفاض يلبسه الرجال" },
-            { word: "دربكة", hint: "شيء يُستخدم", kidsHint: "طبلة صغيرة نضرب عليها بالأيدي" },
-            { word: "ناي", hint: "شيء يُستخدم", kidsHint: "آلة نفخ طويلة رفيعة صوتها حزين" },
-            { word: "دبكة", hint: "نشاط جماعي", kidsHint: "رقصة جماعية نمسك أيدي بعض ونضرب بالأرجل" },
-            { word: "حناء", hint: "شيء يُستخدم", kidsHint: "صبغة برتقالية نرسم بها على اليد" },
-            { word: "بخور", hint: "شيء يُستخدم", kidsHint: "عود نحرقه يطلع دخان ريحته حلوة" },
-            { word: "دلة قهوة", hint: "شيء يُستخدم", kidsHint: "إبريق معدني نصب منه القهوة" },
-            { word: "سبحة", hint: "شيء يُستخدم", kidsHint: "حبات مربوطة نعدها ونذكر الله" },
-            { word: "خيمة", hint: "مكان", kidsHint: "بيت من القماش كان يسكنه البدو" },
-            { word: "فانوس", hint: "شيء يُستخدم", kidsHint: "مصباح نضيئه في رمضان" },
-            { word: "نخلة", hint: "شيء في الطبيعة", kidsHint: "شجرة طويلة فيها تمر" },
-            { word: "جمل", hint: "كائن حي", kidsHint: "سفينة الصحراء حيوان له سنام" }
-        ],
-        
-        // Arab Celebrities
-        arab_celebrities: [
-            { word: "فيروز", hint: "شخص مشهور", kidsHint: "مطربة لبنانية صوتها جميل تغني للصباح" },
-            { word: "أم كلثوم", hint: "شخص مشهور", kidsHint: "مطربة مصرية مشهورة جداً" },
-            { word: "محمد عبده", hint: "شخص مشهور", kidsHint: "مطرب سعودي كبير يسمونه فنان العرب" },
-            { word: "كاظم الساهر", hint: "شخص مشهور", kidsHint: "مطرب عراقي يغني قصائد شعرية" },
-            { word: "نانسي عجرم", hint: "شخص مشهور", kidsHint: "مطربة لبنانية تغني أغاني راقصة" },
-            { word: "عمرو دياب", hint: "شخص مشهور", kidsHint: "مطرب مصري يغني أغاني رومانسية" },
-            { word: "صباح فخري", hint: "شخص مشهور", kidsHint: "مطرب سوري كبير يغني الطرب الأصيل" },
-            { word: "عادل إمام", hint: "شخص مشهور", kidsHint: "ممثل مصري كوميدي يضحك الناس" },
-            { word: "دريد لحام", hint: "شخص مشهور", kidsHint: "ممثل سوري كوميدي اسمه غوار" },
-            { word: "محمد صلاح", hint: "شخص مشهور", kidsHint: "لاعب كرة قدم مصري في ليفربول" },
-            { word: "نزار قباني", hint: "شخص مشهور", kidsHint: "شاعر سوري يكتب شعر عن الحب" },
-            { word: "أسمهان", hint: "شخص مشهور", kidsHint: "مطربة سورية صوتها قوي جداً" }
-        ],
-        
-        // Syrian Proverbs - 35+ proverbs
-        syrian_proverbs: [
-            { word: "اللي ما بيعرف الصقر بيشويه", hint: "قول شعبي", kidsHint: "مثل عن شخص لا يعرف قيمة الأشياء" },
-            { word: "القرد بعين أمه غزال", hint: "قول شعبي", kidsHint: "مثل عن حب الأم لأولادها مهما كانوا" },
-            { word: "اللي بيته من زجاج ما يرمي الناس بحجر", hint: "قول شعبي", kidsHint: "مثل عن عدم انتقاد الآخرين" },
-            { word: "الصبر مفتاح الفرج", hint: "قول شعبي", kidsHint: "مثل عن أهمية الصبر" },
-            { word: "يد واحدة ما بتصفق", hint: "قول شعبي", kidsHint: "مثل عن أهمية التعاون" },
-            { word: "الحركة بركة", hint: "قول شعبي", kidsHint: "مثل عن فائدة العمل والنشاط" },
-            { word: "العين بصيرة واليد قصيرة", hint: "قول شعبي", kidsHint: "مثل عن رؤية شيء ولا نستطيع الوصول له" },
-            { word: "على قد لحافك مد رجليك", hint: "قول شعبي", kidsHint: "مثل عن العيش حسب الإمكانيات" },
-            { word: "ابن الوز عوام", hint: "قول شعبي", kidsHint: "مثل عن وراثة الصفات من الأهل" },
-            { word: "الطيور على أشكالها تقع", hint: "قول شعبي", kidsHint: "مثل عن تجمع المتشابهين" },
-            { word: "اللي فات مات", hint: "قول شعبي", kidsHint: "مثل عن نسيان الماضي" },
-            { word: "درهم وقاية خير من قنطار علاج", hint: "قول شعبي", kidsHint: "مثل عن أهمية الحذر والوقاية" },
-            { word: "من جد وجد", hint: "قول شعبي", kidsHint: "مثل عن أن الجهد يؤدي للنجاح" },
-            { word: "الجار قبل الدار", hint: "قول شعبي", kidsHint: "مثل عن أهمية الجار الجيد" },
-            { word: "رب أخ لك لم تلده أمك", hint: "قول شعبي", kidsHint: "مثل عن الصداقة القوية" },
-            { word: "الكلاب تنبح والقافلة تسير", hint: "قول شعبي", kidsHint: "مثل عن تجاهل الانتقادات" },
-            { word: "مو كل مرة بتسلم الجرة", hint: "قول شعبي", kidsHint: "مثل عن أن الحظ لا يدوم" },
-            { word: "الفلوس بتجيب عروس", hint: "قول شعبي", kidsHint: "مثل عن أهمية المال" },
-            { word: "بعد ما شاب ودوه الكتاب", hint: "قول شعبي", kidsHint: "مثل عن التعلم المتأخر" },
-            { word: "جوز الحرة مغطى", hint: "قول شعبي", kidsHint: "مثل عن المرأة الشريفة" },
-            { word: "اطعم الفم تستحي العين", hint: "قول شعبي", kidsHint: "مثل عن الكرم والإحسان" },
-            { word: "الحيطان إلها ودان", hint: "قول شعبي", kidsHint: "مثل عن الحذر في الكلام" },
-            { word: "خبي قرشك الأبيض ليومك الأسود", hint: "قول شعبي", kidsHint: "مثل عن التوفير للمستقبل" },
-            { word: "اللي بيطلع من داره بيقل مقداره", hint: "قول شعبي", kidsHint: "مثل عن أهمية البقاء في الوطن" },
-            { word: "ضربني وبكى سبقني واشتكى", hint: "قول شعبي", kidsHint: "مثل عن الظالم الذي يدعي الظلم" },
-            { word: "اللي ما بيحسب حساب رفاقو ما بيجي معاهم", hint: "قول شعبي", kidsHint: "مثل عن احترام الآخرين" },
-            { word: "الباب اللي بيجيك منو الريح سدو واستريح", hint: "قول شعبي", kidsHint: "مثل عن تجنب المشاكل" },
-            { word: "اللي بيزرع ريح بيحصد عاصفة", hint: "قول شعبي", kidsHint: "مثل عن عواقب الأفعال السيئة" },
-            { word: "عصفور بالأيد ولا عشرة عالشجرة", hint: "قول شعبي", kidsHint: "مثل عن قيمة المضمون" },
-            { word: "اللي بياخد من غير ملتو بيموت بعلتو", hint: "قول شعبي", kidsHint: "مثل عن الحرام" },
-            { word: "المكتوب باين من عنوانو", hint: "قول شعبي", kidsHint: "مثل عن وضوح الأمور من البداية" },
-            { word: "كتر السلام بيقلل المعرفة", hint: "قول شعبي", kidsHint: "مثل عن الاعتدال في العلاقات" },
-            { word: "اللي بيحكي كتير بيغلط كتير", hint: "قول شعبي", kidsHint: "مثل عن الصمت والحكمة" },
-            { word: "الدم ما بيصير مي", hint: "قول شعبي", kidsHint: "مثل عن قوة صلة القرابة" },
-            { word: "المي بتكذب الغطاس", hint: "قول شعبي", kidsHint: "مثل عن كشف الحقيقة" },
-            { word: "اللي بيجرب المجرب عقلو مخرب", hint: "قول شعبي", kidsHint: "مثل عن التعلم من التجارب" },
-            { word: "القناعة كنز لا يفنى", hint: "قول شعبي", kidsHint: "مثل عن الرضا بما قسمه الله" },
-            { word: "العلم نور", hint: "قول شعبي", kidsHint: "مثل عن أهمية التعليم" }
-        ],
-        
-        // Animals
-        animals: [
-            { word: "أسد", hint: "كائن حي", kidsHint: "حيوان كبير وقوي يسمى ملك الغابة" },
-            { word: "زرافة", hint: "كائن حي", kidsHint: "حيوان طويل جداً له رقبة طويلة" },
-            { word: "فيل", hint: "كائن حي", kidsHint: "حيوان ضخم له خرطوم طويل وأذنين كبيرتين" },
-            { word: "قرد", hint: "كائن حي", kidsHint: "حيوان يحب الموز ويتسلق الأشجار" },
-            { word: "دب", hint: "كائن حي", kidsHint: "حيوان كبير وقوي يحب العسل" },
-            { word: "نمر", hint: "كائن حي", kidsHint: "حيوان سريع له خطوط سوداء وبرتقالية" },
-            { word: "حوت", hint: "كائن حي", kidsHint: "أكبر حيوان في العالم يعيش في البحر" },
-            { word: "دولفين", hint: "كائن حي", kidsHint: "حيوان ذكي يعيش في البحر ويقفز" },
-            { word: "بطريق", hint: "كائن حي", kidsHint: "طائر لا يطير يعيش في مكان بارد" },
-            { word: "كنغر", hint: "كائن حي", kidsHint: "حيوان يقفز ويحمل أطفاله في جيب" },
-            { word: "ثعلب", hint: "كائن حي", kidsHint: "حيوان ماكر برتقالي له ذيل كثيف" },
-            { word: "ذئب", hint: "كائن حي", kidsHint: "حيوان يشبه الكلب يعوي في الليل" },
-            { word: "غزال", hint: "كائن حي", kidsHint: "حيوان جميل ورشيق يركض بسرعة" },
-            { word: "سلحفاة", hint: "كائن حي", kidsHint: "حيوان بطيء يحمل بيته على ظهره" },
-            { word: "أخطبوط", hint: "كائن حي", kidsHint: "حيوان بحري له ثماني أذرع" }
-        ],
-        
-        // Food
-        food: [
-            { word: "بيتزا", hint: "شيء يؤكل", kidsHint: "طعام دائري فيه جبن وطماطم" },
-            { word: "برجر", hint: "شيء يؤكل", kidsHint: "لحم في خبز دائري مع خس وطماطم" },
-            { word: "باستا", hint: "شيء يؤكل", kidsHint: "معكرونة مع صوص أحمر أو أبيض" },
-            { word: "آيس كريم", hint: "شيء يؤكل", kidsHint: "حلوى باردة جداً تذوب بسرعة" },
-            { word: "كيك", hint: "شيء يؤكل", kidsHint: "حلوى ناكلها في أعياد الميلاد" },
-            { word: "فشار", hint: "شيء يؤكل", kidsHint: "ذرة تنفجر في الحرارة ناكلها في السينما" },
-            { word: "شوكولاتة", hint: "شيء يؤكل", kidsHint: "حلوى لونها بني حلوة جداً" },
-            { word: "موز", hint: "شيء يؤكل", kidsHint: "فاكهة صفراء طويلة القرود تحبها" },
-            { word: "تفاح", hint: "شيء يؤكل", kidsHint: "فاكهة دائرية حمراء أو خضراء" },
-            { word: "بطاطس", hint: "شيء يؤكل", kidsHint: "نقليها ونأكلها مع الكاتشب" },
-            { word: "سوشي", hint: "شيء يؤكل", kidsHint: "أكل ياباني فيه رز وسمك" },
-            { word: "دونات", hint: "شيء يؤكل", kidsHint: "حلوى دائرية فيها ثقب في الوسط" },
-            { word: "بانكيك", hint: "شيء يؤكل", kidsHint: "فطيرة مسطحة ناكلها في الصباح" },
-            { word: "ساندويش", hint: "شيء يؤكل", kidsHint: "خبز فيه جبن أو لحم أو خضار" }
-        ],
-        
-        // Countries
-        countries: [
-            { word: "سوريا", hint: "مكان على الخريطة", kidsHint: "دولة عربية فيها دمشق وحلب" },
-            { word: "لبنان", hint: "مكان على الخريطة", kidsHint: "دولة صغيرة جميلة فيها جبال وبحر" },
-            { word: "مصر", hint: "مكان على الخريطة", kidsHint: "دولة فيها أهرامات وأبو الهول" },
-            { word: "السعودية", hint: "مكان على الخريطة", kidsHint: "دولة فيها الكعبة المشرفة" },
-            { word: "الإمارات", hint: "مكان على الخريطة", kidsHint: "دولة فيها برج خليفة الأطول" },
-            { word: "كندا", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة جداً فيها ثلج كثير" },
-            { word: "اليابان", hint: "مكان على الخريطة", kidsHint: "دولة فيها أنمي وسوشي" },
-            { word: "فرنسا", hint: "مكان على الخريطة", kidsHint: "دولة فيها برج إيفل" },
-            { word: "إيطاليا", hint: "مكان على الخريطة", kidsHint: "دولة شكلها مثل الحذاء" },
-            { word: "البرازيل", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة ناسها يحبون كرة القدم" },
-            { word: "استراليا", hint: "مكان على الخريطة", kidsHint: "دولة بعيدة فيها كنغر وكوالا" },
-            { word: "الصين", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة جداً فيها سور طويل" },
-            { word: "أمريكا", hint: "مكان على الخريطة", kidsHint: "دولة كبيرة فيها تمثال الحرية" }
-        ],
-        
-        // Movies
-        movies: [
-            { word: "الأسد الملك", hint: "عمل فني", kidsHint: "فيلم كرتون عن أسد صغير اسمه سيمبا" },
-            { word: "فروزن", hint: "عمل فني", kidsHint: "فيلم عن أميرة لها قوة الثلج اسمها إلسا" },
-            { word: "توي ستوري", hint: "عمل فني", kidsHint: "فيلم عن لعب أطفال تتحرك وتتكلم" },
-            { word: "العثور على نيمو", hint: "عمل فني", kidsHint: "فيلم عن سمكة برتقالية صغيرة ضاعت" },
-            { word: "هاري بوتر", hint: "عمل فني", kidsHint: "فيلم عن ولد ساحر يتعلم السحر" },
-            { word: "سبايدرمان", hint: "عمل فني", kidsHint: "فيلم عن بطل يطلع خيوط مثل العنكبوت" },
-            { word: "باتمان", hint: "عمل فني", kidsHint: "فيلم عن بطل يلبس أسود" },
-            { word: "علاء الدين", hint: "عمل فني", kidsHint: "فيلم عن ولد يلاقي مصباح سحري فيه جني" },
-            { word: "موانا", hint: "عمل فني", kidsHint: "فيلم عن بنت شجاعة تبحر في البحر" },
-            { word: "رابونزل", hint: "عمل فني", kidsHint: "فيلم عن أميرة شعرها طويل جداً" },
-            { word: "كوكو", hint: "عمل فني", kidsHint: "فيلم عن ولد يحب الموسيقى" },
-            { word: "زوتوبيا", hint: "عمل فني", kidsHint: "فيلم عن أرنبة تصير شرطية" }
-        ],
-        
-        // Sports
-        sports: [
-            { word: "كرة القدم", hint: "نشاط رياضي", kidsHint: "رياضة نركل فيها الكرة بالقدم" },
-            { word: "كرة السلة", hint: "نشاط رياضي", kidsHint: "رياضة نرمي فيها الكرة في سلة عالية" },
-            { word: "السباحة", hint: "نشاط رياضي", kidsHint: "رياضة نسبح فيها في الماء" },
-            { word: "الجري", hint: "نشاط رياضي", kidsHint: "رياضة نركض فيها بسرعة" },
-            { word: "التنس", hint: "نشاط رياضي", kidsHint: "رياضة نضرب فيها كرة صغيرة بمضرب" },
-            { word: "الملاكمة", hint: "نشاط رياضي", kidsHint: "رياضة نلبس فيها قفازات ونلكم" },
-            { word: "الجمباز", hint: "نشاط رياضي", kidsHint: "رياضة نعمل فيها حركات صعبة وشقلبات" },
-            { word: "ركوب الدراجات", hint: "نشاط رياضي", kidsHint: "رياضة نركب فيها دراجة ونسابق" },
-            { word: "التزلج", hint: "نشاط رياضي", kidsHint: "رياضة ننزلق فيها على الثلج" },
-            { word: "الكاراتيه", hint: "نشاط رياضي", kidsHint: "رياضة قتالية نتعلم فيها ندافع عن نفسنا" }
-        ],
-        
-        // Professions
-        professions: [
-            { word: "طبيب", hint: "عمل أو وظيفة", kidsHint: "شخص يعالج المرضى" },
-            { word: "معلم", hint: "عمل أو وظيفة", kidsHint: "شخص يعلم الأطفال في المدرسة" },
-            { word: "طيار", hint: "عمل أو وظيفة", kidsHint: "شخص يقود الطائرة في السماء" },
-            { word: "رجل إطفاء", hint: "عمل أو وظيفة", kidsHint: "شخص شجاع يطفئ الحريق" },
-            { word: "طباخ", hint: "عمل أو وظيفة", kidsHint: "شخص يطبخ الأكل في المطعم" },
-            { word: "مزارع", hint: "عمل أو وظيفة", kidsHint: "شخص يزرع الخضار والفواكه" },
-            { word: "بناء", hint: "عمل أو وظيفة", kidsHint: "شخص يبني البيوت والمباني" },
-            { word: "مهندس", hint: "عمل أو وظيفة", kidsHint: "شخص يصمم ويبني الأشياء" },
-            { word: "شرطي", hint: "عمل أو وظيفة", kidsHint: "شخص يحمي الناس ويمسك اللصوص" },
-            { word: "صيدلي", hint: "عمل أو وظيفة", kidsHint: "شخص يعطينا الدواء من الصيدلية" },
-            { word: "رائد فضاء", hint: "عمل أو وظيفة", kidsHint: "شخص يسافر للفضاء ويرى الكواكب" }
-        ],
-        
-        // Places
-        places: [
-            { word: "مدرسة", hint: "مكان يُذهب إليه", kidsHint: "مكان نتعلم فيه ونلعب مع الأصدقاء" },
-            { word: "مستشفى", hint: "مكان يُذهب إليه", kidsHint: "مكان نروح له لما نكون مرضى" },
-            { word: "حديقة", hint: "مكان يُذهب إليه", kidsHint: "مكان أخضر فيه أشجار وأزهار نلعب فيه" },
-            { word: "شاطئ", hint: "مكان يُذهب إليه", kidsHint: "مكان فيه رمل وماء البحر" },
-            { word: "مطار", hint: "مكان يُذهب إليه", kidsHint: "مكان تطير منه الطائرات" },
-            { word: "حديقة حيوانات", hint: "مكان يُذهب إليه", kidsHint: "مكان نشوف فيه حيوانات كثيرة" },
-            { word: "سوبر ماركت", hint: "مكان يُذهب إليه", kidsHint: "مكان كبير نشتري منه الأكل" },
-            { word: "مكتبة", hint: "مكان يُذهب إليه", kidsHint: "مكان فيه كتب كثيرة نقرأها" },
-            { word: "ملعب", hint: "مكان يُذهب إليه", kidsHint: "مكان نلعب فيه كرة القدم" },
-            { word: "سينما", hint: "مكان يُذهب إليه", kidsHint: "مكان نشاهد فيه أفلام على شاشة كبيرة" },
-            { word: "مطعم", hint: "مكان يُذهب إليه", kidsHint: "مكان نأكل فيه أكل لذيذ" }
-        ],
-        
-        // Objects
-        objects: [
-            { word: "هاتف", hint: "شيء يُستخدم", kidsHint: "جهاز نتكلم فيه مع الناس ونلعب ألعاب" },
-            { word: "سيارة", hint: "شيء يُستخدم", kidsHint: "شيء يوصلنا من مكان لمكان على العجلات" },
-            { word: "ساعة", hint: "شيء يُستخدم", kidsHint: "شيء نشوف فيه الوقت نلبسه في اليد" },
-            { word: "كتاب", hint: "شيء يُستخدم", kidsHint: "شيء فيه صفحات وقصص نقرأها" },
-            { word: "قلم", hint: "شيء يُستخدم", kidsHint: "شيء نكتب ونرسم فيه" },
-            { word: "كرسي", hint: "شيء يُستخدم", kidsHint: "شيء نجلس عليه" },
-            { word: "طاولة", hint: "شيء يُستخدم", kidsHint: "شيء نضع عليه الأكل أو نكتب عليه" },
-            { word: "نظارة", hint: "شيء يُستخدم", kidsHint: "شيء نلبسه على العيون لنشوف أحسن" },
-            { word: "مظلة", hint: "شيء يُستخدم", kidsHint: "شيء نفتحه لما تمطر" },
-            { word: "تلفزيون", hint: "شيء يُستخدم", kidsHint: "شاشة كبيرة نشاهد فيها الكرتون" },
-            { word: "ثلاجة", hint: "شيء يُستخدم", kidsHint: "شيء كبير يحفظ الأكل بارد" },
-            { word: "مفتاح", hint: "شيء يُستخدم", kidsHint: "شيء صغير نفتح فيه الأبواب" }
-        ],
-        
-        // English Easy
-        english_easy: [
-            { word: "Cat", hint: "Living thing", kidsHint: "A small furry pet that says meow" },
-            { word: "Dog", hint: "Living thing", kidsHint: "A friendly pet that barks" },
-            { word: "Sun", hint: "Something in nature", kidsHint: "The big bright ball in the sky" },
-            { word: "Moon", hint: "Something in nature", kidsHint: "The light in the night sky" },
-            { word: "Tree", hint: "Something in nature", kidsHint: "A tall plant with leaves" },
-            { word: "House", hint: "A place", kidsHint: "A building where families live" },
-            { word: "Car", hint: "Something used", kidsHint: "A vehicle with four wheels" },
-            { word: "Ball", hint: "Something used", kidsHint: "A round thing we throw" },
-            { word: "Book", hint: "Something used", kidsHint: "Pages with stories to read" },
-            { word: "Apple", hint: "Something eaten", kidsHint: "A red or green round fruit" },
-            { word: "Banana", hint: "Something eaten", kidsHint: "A long yellow fruit" },
-            { word: "Water", hint: "Something consumed", kidsHint: "Clear liquid we drink" },
-            { word: "Bird", hint: "Living thing", kidsHint: "An animal with wings that can fly" },
-            { word: "Fish", hint: "Living thing", kidsHint: "An animal that swims in water" },
-            { word: "Flower", hint: "Something in nature", kidsHint: "A colorful plant that smells nice" }
-        ],
-        
-        // English Actions
-        english_actions: [
-            { word: "Running", hint: "An action", kidsHint: "Moving your legs fast" },
-            { word: "Jumping", hint: "An action", kidsHint: "Going up off the ground" },
-            { word: "Swimming", hint: "An action", kidsHint: "Moving through water" },
-            { word: "Dancing", hint: "An action", kidsHint: "Moving your body to music" },
-            { word: "Singing", hint: "An action", kidsHint: "Making music with your voice" },
-            { word: "Reading", hint: "An action", kidsHint: "Looking at words in a book" },
-            { word: "Writing", hint: "An action", kidsHint: "Making letters with a pen" },
-            { word: "Drawing", hint: "An action", kidsHint: "Making pictures" },
-            { word: "Cooking", hint: "An action", kidsHint: "Making food to eat" },
-            { word: "Sleeping", hint: "An action", kidsHint: "Closing eyes and resting" },
-            { word: "Walking", hint: "An action", kidsHint: "Moving by putting one foot in front of the other" },
-            { word: "Laughing", hint: "An action", kidsHint: "Making happy sounds when something is funny" }
-        ],
-        
-        // English Objects
-        english_objects: [
-            { word: "Umbrella", hint: "Something used", kidsHint: "Opens up to keep you dry when it rains" },
-            { word: "Backpack", hint: "Something used", kidsHint: "A bag you wear on your back" },
-            { word: "Pillow", hint: "Something used", kidsHint: "Soft thing you put your head on" },
-            { word: "Blanket", hint: "Something used", kidsHint: "Keeps you warm when you sleep" },
-            { word: "Mirror", hint: "Something used", kidsHint: "Shows you what you look like" },
-            { word: "Pencil", hint: "Something used", kidsHint: "Yellow stick you write with" },
-            { word: "Television", hint: "Something used", kidsHint: "Screen where you watch shows" },
-            { word: "Camera", hint: "Something used", kidsHint: "Takes pictures" },
-            { word: "Bicycle", hint: "Something used", kidsHint: "Two wheels you pedal" },
-            { word: "Balloon", hint: "Something used", kidsHint: "Filled with air, floats up" },
-            { word: "Candle", hint: "Something used", kidsHint: "Has a flame that gives light" },
-            { word: "Key", hint: "Something used", kidsHint: "Small metal thing that opens locks" }
-        ]
-    };
-
-    // ===============================
-    // GAME STATE
-    // ===============================
-    let currentSession = null;
-    let currentGame = null;
-    let players = [];
-    let currentPlayerIndex = 0;
-    let currentVoterIndex = 0;
-    let allVotes = [];
-    let currentVotes = [];
-    let timerInterval = null;
-    let selectedFirstPlayerIndex = -1;
-
-    // ===============================
-    // LOCAL STORAGE
+    // STORAGE
     // ===============================
     const Storage = {
         getSessions() {
@@ -1411,9 +1665,7 @@
                     sessions.push(session);
                 }
                 localStorage.setItem('imposterSessions', JSON.stringify(sessions));
-            } catch(e) {
-                console.log('Storage error');
-            }
+            } catch(e) {}
         },
         
         deleteSession(sessionId) {
@@ -1431,7 +1683,7 @@
     };
 
     // ===============================
-    // DATE FORMATTER - GREGORIAN
+    // DATE FORMATTER
     // ===============================
     function formatDate(dateString) {
         try {
@@ -1467,12 +1719,12 @@
         const name = input.value.trim();
         
         if (!name) {
-            alert('الرجاء إدخال اسم اللاعب');
+            alert(t('enterPlayerName'));
             return;
         }
         
         if (players.find(p => p.name === name)) {
-            alert('اسم اللاعب موجود مسبقاً');
+            alert(t('playerExists'));
             return;
         }
         
@@ -1501,7 +1753,7 @@
             item.className = 'player-item';
             item.innerHTML = `
                 <span class="player-name">${player.name}</span>
-                <button class="delete-btn" onclick="removePlayer(${player.id})">حذف</button>
+                <button class="delete-btn" onclick="removePlayer(${player.id})">${t('delete')}</button>
             `;
             list.appendChild(item);
         });
@@ -1513,12 +1765,12 @@
         const sessionName = document.getElementById('sessionName').value.trim();
         
         if (!sessionName) {
-            alert('الرجاء إدخال اسم الجلسة');
+            alert(t('enterSessionName'));
             return;
         }
         
         if (players.length < 3) {
-            alert('يجب إضافة 3 لاعبين على الأقل');
+            alert(t('min3Players'));
             return;
         }
         
@@ -1549,7 +1801,7 @@
             list.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📂</div>
-                    <div class="empty-text">لا توجد جلسات محفوظة بعد</div>
+                    <div class="empty-text">${t('noSessions')}</div>
                 </div>
             `;
             return;
@@ -1565,8 +1817,8 @@
             card.innerHTML = `
                 <div class="session-name">${session.name}</div>
                 <div class="session-info">
-                    <span class="stats-badge">👥 ${session.players.length} لاعبين</span>
-                    <span class="stats-badge">🎮 ${session.totalGames || 0} لعبة</span>
+                    <span class="stats-badge">👥 ${session.players.length} ${t('players')}</span>
+                    <span class="stats-badge">🎮 ${session.totalGames || 0} ${t('games')}</span>
                     <span class="stats-badge">🏆 ${topPlayer ? topPlayer.name : '-'}</span>
                 </div>
                 <div class="session-info" style="margin-top: 10px;">
@@ -1591,7 +1843,7 @@
 
     function updateSessionPlayersDisplay() {
         const playersDiv = document.getElementById('sessionPlayers');
-        playersDiv.innerHTML = '<h3>👥 اللاعبون والنقاط:</h3>';
+        playersDiv.innerHTML = `<h3>👥 ${t('playersAndScores')}</h3>`;
         
         const sortedPlayers = [...currentSession.players].sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
         
@@ -1602,7 +1854,7 @@
             item.innerHTML = `
                 <span class="score-rank">${rank}</span>
                 <span class="score-name">${player.name}</span>
-                <span class="score-points">${player.totalScore || 0} نقطة</span>
+                <span class="score-points">${player.totalScore || 0} ${t('point')}</span>
                 <div class="player-actions">
                     <button class="edit-btn" onclick="editPlayer(${player.id}, '${player.name}')">✏️</button>
                     <button class="delete-btn" onclick="removePlayerFromSession(${player.id})">🗑️</button>
@@ -1617,12 +1869,12 @@
         const name = input.value.trim();
         
         if (!name) {
-            alert('الرجاء إدخال اسم اللاعب');
+            alert(t('enterPlayerName'));
             return;
         }
         
         if (currentSession.players.find(p => p.name === name)) {
-            alert('اسم اللاعب موجود مسبقاً');
+            alert(t('playerExists'));
             return;
         }
         
@@ -1641,11 +1893,11 @@
 
     function removePlayerFromSession(playerId) {
         if (currentSession.players.length <= 3) {
-            alert('لا يمكن حذف أكثر، يجب أن يبقى 3 لاعبين على الأقل');
+            alert(t('cantDeleteMin'));
             return;
         }
         
-        if (confirm('هل أنت متأكد من حذف هذا اللاعب؟')) {
+        if (confirm(t('confirmDelete'))) {
             currentSession.players = currentSession.players.filter(p => p.id !== playerId);
             Storage.saveSession(currentSession);
             updateSessionPlayersDisplay();
@@ -1664,12 +1916,12 @@
         const newName = document.getElementById('editPlayerInput').value.trim();
         
         if (!newName) {
-            alert('الرجاء إدخال اسم اللاعب');
+            alert(t('enterPlayerName'));
             return;
         }
         
         if (currentSession.players.find(p => p.name === newName && p.id !== playerId)) {
-            alert('اسم اللاعب موجود مسبقاً');
+            alert(t('playerExists'));
             return;
         }
         
@@ -1688,7 +1940,7 @@
     }
 
     function deleteSession() {
-        if (confirm('هل أنت متأكد من حذف هذه الجلسة؟')) {
+        if (confirm(t('confirmDeleteSession'))) {
             Storage.deleteSession(currentSession.id);
             currentSession = null;
             showScreen('sessionsScreen');
@@ -1696,7 +1948,7 @@
     }
     
     function resetSessionScores() {
-        if (confirm('هل أنت متأكد من تصفير جميع نقاط اللاعبين في هذه الجلسة؟')) {
+        if (confirm(t('confirmResetScores'))) {
             currentSession.players.forEach(player => {
                 player.totalScore = 0;
                 player.gamesPlayed = 0;
@@ -1706,13 +1958,12 @@
             Storage.saveSession(currentSession);
             updateSessionPlayersDisplay();
             AudioManager.playSuccess();
-            alert('تم تصفير جميع النقاط بنجاح! ✅');
+            alert(t('scoresReset'));
         }
     }
     
     function resetCurrentGameScores() {
-        if (confirm('هل أنت متأكد من إلغاء نتائج هذه الجولة؟')) {
-            // Revert the scores that were added in this game
+        if (confirm(t('confirmCancelRound'))) {
             if (currentGame && currentGame.gameScores) {
                 currentGame.gameScores.forEach(gs => {
                     const player = currentSession.players.find(p => p.id === gs.id);
@@ -1722,7 +1973,6 @@
                     }
                 });
                 
-                // Remove the last game from history
                 if (currentSession.gameHistory && currentSession.gameHistory.length > 0) {
                     currentSession.gameHistory.pop();
                 }
@@ -1732,7 +1982,7 @@
             }
             
             loadSessionDetail(currentSession.id);
-            alert('تم إلغاء نتائج هذه الجولة! ✅');
+            alert(t('roundCancelled'));
         }
     }
 
@@ -1743,7 +1993,7 @@
             list.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📜</div>
-                    <div class="empty-text">لا يوجد تاريخ ألعاب بعد</div>
+                    <div class="empty-text">${t('noHistory')}</div>
                 </div>
             `;
         } else {
@@ -1755,9 +2005,9 @@
                 item.innerHTML = `
                     <div class="history-date">${formatDate(game.timestamp)}</div>
                     <div class="history-details">
-                        🎮 لعبة #${currentSession.gameHistory.length - index} | 
-                        الكلمة: ${game.word || '?'} | 
-                        ${game.imposterCount || 1} محتال | 
+                        🎮 ${t('game')} #${currentSession.gameHistory.length - index} | 
+                        ${t('word')}: ${game.word || '?'} | 
+                        ${game.imposterCount || 1} 🎭 | 
                         ${game.winner || '?'}
                     </div>
                 `;
@@ -1783,7 +2033,7 @@
         const showHintToImposter = document.getElementById('showHintToImposter').checked;
         
         if (imposterCount >= currentSession.players.length) {
-            alert('عدد المحتالين يجب أن يكون أقل من عدد اللاعبين');
+            alert(t('tooManyImposters'));
             return;
         }
         
@@ -1791,7 +2041,7 @@
         
         const words = WORDS[category];
         if (!words || words.length === 0) {
-            alert('لا توجد كلمات في هذه الفئة');
+            alert(t('noCategoryWords'));
             return;
         }
         
@@ -1800,9 +2050,15 @@
         const shuffled = [...currentSession.players].sort(() => Math.random() - 0.5);
         const imposters = shuffled.slice(0, imposterCount).map(p => p.id);
         
+        // Get the right word and hint based on language
+        const word = currentLang === 'en' ? selectedWord.wordEn : selectedWord.word;
+        const hint = kidsMode 
+            ? (currentLang === 'en' ? selectedWord.kidsHintEn : selectedWord.kidsHint)
+            : (currentLang === 'en' ? selectedWord.hintEn : selectedWord.hint);
+        
         currentGame = {
-            word: selectedWord.word,
-            hint: kidsMode ? selectedWord.kidsHint : selectedWord.hint,
+            word: word,
+            hint: hint,
             category: category,
             imposters: imposters,
             imposterCount: imposterCount,
@@ -1867,38 +2123,20 @@
             
             resultDiv.innerHTML = `
                 <div class="selected-player-banner">
-                    <div style="font-size: 20px;">🎉 اللاعب الأول هو:</div>
+                    <div style="font-size: 20px;">🎉 ${t('firstPlayerIs')}</div>
                     <div class="selected-player-name">${firstPlayer.name}</div>
                     <div style="font-size: 16px; margin-top: 10px;">
-                        سلّم الموبايل لـ ${firstPlayer.name} لبدء كشف البطاقات!
+                        ${t('passPhoneTo')} ${firstPlayer.name} ${t('toStartCards')}
                     </div>
                 </div>
                 <button class="btn btn-success" onclick="showFirstPlayerPrivacy()">
-                    ✅ تم تسليم الموبايل - المتابعة
+                    ✅ ${t('phonePassed')}
                 </button>
             `;
         }, 2000);
     }
 
-    // ===============================
-    // CARD REVEAL
-    // ===============================
-    function startCardReveal() {
-        if (selectedFirstPlayerIndex > 0) {
-            const reordered = [
-                ...currentGame.playerCards.slice(selectedFirstPlayerIndex),
-                ...currentGame.playerCards.slice(0, selectedFirstPlayerIndex)
-            ];
-            currentGame.playerCards = reordered;
-        }
-        
-        currentPlayerIndex = 0;
-        showScreen('cardRevealScreen');
-        showNextPlayer();
-    }
-    
     function showFirstPlayerPrivacy() {
-        // Reorder players so first player is at index 0
         if (selectedFirstPlayerIndex > 0) {
             const reordered = [
                 ...currentGame.playerCards.slice(selectedFirstPlayerIndex),
@@ -1913,10 +2151,10 @@
         
         content.innerHTML = `
             <div class="privacy-icon">🎴</div>
-            <div class="privacy-text">دور كشف البطاقة لـ:</div>
+            <div class="privacy-text">${t('cardRevealFor')}</div>
             <div class="next-player-name">${firstPlayer.name}</div>
             <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="firstPlayerReadyBtn">
-                ✅ أنا ${firstPlayer.name} - جاهز!
+                ✅ ${currentLang === 'ar' ? 'أنا' : "I'm"} ${firstPlayer.name} - ${t('imReady')}
             </button>
         `;
         
@@ -1930,6 +2168,9 @@
         };
     }
 
+    // ===============================
+    // CARD REVEAL
+    // ===============================
     function showNextPlayer() {
         if (currentPlayerIndex >= currentGame.playerCards.length) {
             startDiscussion();
@@ -1937,7 +2178,7 @@
         }
         
         const player = currentGame.playerCards[currentPlayerIndex];
-        document.getElementById('currentPlayerName').textContent = `دور اللاعب: ${player.name}`;
+        document.getElementById('currentPlayerName').textContent = `${t('playerTurn')} ${player.name}`;
         document.getElementById('revealCardBtn').style.display = 'block';
         document.getElementById('cardContainer').innerHTML = '';
         document.getElementById('nextPlayerBtn').innerHTML = '';
@@ -1956,18 +2197,18 @@
         if (player.isImposter) {
             let imposterContent = `
                 <div class="card-word">🎭</div>
-                <div class="card-role">أنت المحتال!</div>
+                <div class="card-role">${t('youAreImposter')}</div>
             `;
             if (currentGame.showHintToImposter) {
-                imposterContent += `<div class="card-hint">التلميح: ${currentGame.hint}</div>`;
+                imposterContent += `<div class="card-hint">${t('hint')} ${currentGame.hint}</div>`;
             } else {
-                imposterContent += `<div class="card-hint" style="font-size: 16px; opacity: 0.7;">لا تلميح لك، حاول الاندماج!</div>`;
+                imposterContent += `<div class="card-hint" style="font-size: 16px; opacity: 0.7;">${t('noHintForYou')}</div>`;
             }
             cardDiv.innerHTML = imposterContent;
         } else {
             cardDiv.innerHTML = `
                 <div class="card-word">${currentGame.word}</div>
-                <div class="card-role">✅ لاعب عادي</div>
+                <div class="card-role">✅ ${t('normalPlayer')}</div>
                 ${currentGame.kidsMode ? `<div class="card-hint" style="font-size: 16px;">💡 ${currentGame.hint}</div>` : ''}
             `;
         }
@@ -1977,8 +2218,8 @@
         const nextBtn = document.createElement('button');
         nextBtn.className = 'btn btn-success';
         nextBtn.textContent = currentPlayerIndex < currentGame.playerCards.length - 1 
-            ? '👉 اللاعب التالي' 
-            : '✅ بدء النقاش';
+            ? `👉 ${t('nextPlayer')}` 
+            : `✅ ${t('startDiscussion')}`;
         nextBtn.onclick = moveToNextPlayer;
         document.getElementById('nextPlayerBtn').appendChild(nextBtn);
     }
@@ -1994,13 +2235,13 @@
             const nextPlayer = currentGame.playerCards[nextIndex];
             content.innerHTML = `
                 <div class="privacy-icon">📱</div>
-                <div class="privacy-text">مرر الجهاز إلى:</div>
+                <div class="privacy-text">${t('passDeviceTo')}</div>
                 <div class="next-player-name">${nextPlayer.name}</div>
                 <div class="privacy-text" style="font-size: 18px; opacity: 0.8; margin-top: 20px;">
-                    🙈 الرجاء عدم النظر للشاشة!
+                    🙈 ${t('dontLook')}
                 </div>
                 <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="nextPlayerReadyBtn">
-                    ✅ أنا ${nextPlayer.name} - جاهز!
+                    ✅ ${currentLang === 'ar' ? 'أنا' : "I'm"} ${nextPlayer.name} - ${t('imReady')}
                 </button>
             `;
             
@@ -2014,10 +2255,10 @@
         } else {
             content.innerHTML = `
                 <div class="privacy-icon">💬</div>
-                <div class="privacy-text">الجميع شاهدوا بطاقاتهم!</div>
-                <div class="next-player-name">وقت النقاش</div>
+                <div class="privacy-text">${t('everyoneSawCards')}</div>
+                <div class="next-player-name">${t('discussionTime')}</div>
                 <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="startDiscussionBtn">
-                    ▶️ ابدأ النقاش
+                    ▶️ ${t('startDiscussion')}
                 </button>
             `;
             
@@ -2040,9 +2281,9 @@
         const container = document.getElementById('timerContainer');
         container.innerHTML = `
             <div class="speaker-selection">
-                <h3 style="margin-bottom: 20px;">🎲 من سيبدأ الحديث؟</h3>
+                <h3 style="margin-bottom: 20px;">🎲 ${t('whoSpeaksFirst')}</h3>
                 <button class="btn btn-success" onclick="selectRandomSpeaker()" id="selectSpeakerBtn">
-                    🎯 اختيار عشوائي
+                    🎯 ${t('randomSelect')}
                 </button>
                 <div id="speakerResult"></div>
             </div>
@@ -2079,7 +2320,6 @@
             // If hints are disabled for imposter, don't pick imposter as first speaker
             let eligibleSpeakers = [...currentGame.playerCards];
             if (!currentGame.showHintToImposter) {
-                // Filter out imposters for first speaker
                 const nonImposters = eligibleSpeakers.filter(p => !currentGame.imposters.includes(p.id));
                 if (nonImposters.length > 0) {
                     eligibleSpeakers = nonImposters;
@@ -2092,10 +2332,10 @@
             
             resultDiv.innerHTML = `
                 <div class="selected-speaker">
-                    🗣️ ${speaker.name} سيبدأ الحديث!
+                    🗣️ ${speaker.name} ${t('willSpeakFirst')}
                 </div>
                 <button class="btn" onclick="startActualTimer()" style="margin-top: 15px;">
-                    ⏱️ ابدأ المؤقت
+                    ⏱️ ${t('startTimer')}
                 </button>
             `;
         }, 1500);
@@ -2108,8 +2348,8 @@
             const container = document.getElementById('timerContainer');
             container.innerHTML = `
                 <p style="text-align: center; font-size: 20px; color: #666; margin-top: 30px;">
-                    💬 ناقشوا واكتشفوا المحتال!<br>
-                    (بدون مؤقت)
+                    💬 ${t('discussAndFind')}<br>
+                    ${t('noTimerSet')}
                 </p>
             `;
         }
@@ -2122,8 +2362,8 @@
         container.innerHTML = `
             <div class="timer-display" id="timerDisplay">${formatTime(totalSeconds)}</div>
             <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-                <button class="btn" style="flex: 1;" onclick="pauseTimer()">⏸️ إيقاف</button>
-                <button class="btn btn-success" style="flex: 1;" onclick="addTime(30)">➕30ث</button>
+                <button class="btn" style="flex: 1;" onclick="pauseTimer()">⏸️ ${t('pause')}</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="addTime(30)">${t('add30s')}</button>
             </div>
         `;
         
@@ -2152,8 +2392,8 @@
         const btnContainer = document.querySelector('#timerContainer > div:last-child');
         if (btnContainer) {
             btnContainer.innerHTML = `
-                <button class="btn btn-success" style="flex: 1;" onclick="resumeTimer()">▶️ استئناف</button>
-                <button class="btn" style="flex: 1;" onclick="addTime(30)">➕30ث</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="resumeTimer()">▶️ ${t('resume')}</button>
+                <button class="btn" style="flex: 1;" onclick="addTime(30)">${t('add30s')}</button>
             `;
         }
     }
@@ -2184,8 +2424,8 @@
         const btnContainer = document.querySelector('#timerContainer > div:last-child');
         if (btnContainer) {
             btnContainer.innerHTML = `
-                <button class="btn" style="flex: 1;" onclick="pauseTimer()">⏸️ إيقاف</button>
-                <button class="btn btn-success" style="flex: 1;" onclick="addTime(30)">➕30ث</button>
+                <button class="btn" style="flex: 1;" onclick="pauseTimer()">⏸️ ${t('pause')}</button>
+                <button class="btn btn-success" style="flex: 1;" onclick="addTime(30)">${t('add30s')}</button>
             `;
         }
     }
@@ -2207,7 +2447,7 @@
     }
 
     // ===============================
-    // VOTING - UPDATED SYSTEM
+    // VOTING
     // ===============================
     function proceedToVoting() {
         if (timerInterval) {
@@ -2218,18 +2458,17 @@
         currentVoterIndex = 0;
         allVotes = [];
         
-        // Show privacy screen for first voter
         const firstVoter = currentGame.playerCards[0];
         const privacyScreen = document.getElementById('privacyScreen');
         const content = privacyScreen.querySelector('.privacy-content');
         
         content.innerHTML = `
             <div class="privacy-icon">🗳️</div>
-            <div class="privacy-text">وقت التصويت!</div>
-            <div class="privacy-text" style="font-size: 18px;">دور التصويت لـ:</div>
+            <div class="privacy-text">${t('votingTime')}</div>
+            <div class="privacy-text" style="font-size: 18px;">${t('votingTurn')}</div>
             <div class="next-player-name">${firstVoter.name}</div>
             <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="firstVoterReadyBtn">
-                ✅ أنا ${firstVoter.name} - جاهز!
+                ✅ ${currentLang === 'ar' ? 'أنا' : "I'm"} ${firstVoter.name} - ${t('imReady')}
             </button>
         `;
         
@@ -2247,27 +2486,22 @@
         const voter = currentGame.playerCards[currentVoterIndex];
         document.getElementById('currentVoter').textContent = voter.name;
         
-        // Check if this voter is an imposter
         const voterIsImposter = currentGame.imposters.includes(voter.id);
-        
-        // Reset current votes
         currentVotes = [];
         
         const instructionsDiv = document.getElementById('votingInstructions');
         
         if (voterIsImposter) {
-            // Imposter votes for ONE person only (to blend in)
             instructionsDiv.innerHTML = `
                 <div class="imposter-vote-info">
-                    🎭 أنت المحتال! صوّت على شخص واحد للتمويه
+                    🎭 ${t('youAreImposterVote')} ${t('voteForOne')}
                 </div>
             `;
         } else {
-            // Regular player votes for number of imposters
             const votesNeeded = currentGame.imposterCount;
             instructionsDiv.innerHTML = `
                 <div class="votes-remaining">
-                    اختر <strong>${votesNeeded}</strong> لاعب${votesNeeded > 1 ? 'ين تعتقد أنهم محتالين' : ' تعتقد أنه المحتال'}
+                    ${t('choose')} <strong>${votesNeeded}</strong> ${votesNeeded > 1 ? t('playersYouThink') : t('playerYouThink')}
                 </div>
             `;
         }
@@ -2292,7 +2526,6 @@
     }
 
     function toggleVote(cardElement, playerId, voterIsImposter) {
-        // Imposter votes for 1, regular player votes for imposterCount
         const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
         
         if (currentVotes.includes(playerId)) {
@@ -2303,7 +2536,7 @@
                 currentVotes.push(playerId);
                 cardElement.classList.add('selected');
             } else {
-                alert(`يمكنك اختيار ${maxVotes} لاعب${maxVotes > 1 ? 'ين' : ''} فقط`);
+                alert(`${t('canOnlyChoose')} ${maxVotes} ${maxVotes > 1 ? t('playersOnly') : t('playerOnly')}`);
             }
         }
         
@@ -2316,12 +2549,12 @@
         
         if (currentVotes.length === maxVotes) {
             btn.disabled = false;
-            btn.textContent = '✅ تأكيد التصويت';
+            btn.innerHTML = `✅ ${t('confirmVote')}`;
             btn.style.opacity = '1';
         } else {
             btn.disabled = true;
             const remaining = maxVotes - currentVotes.length;
-            btn.textContent = `اختر ${remaining} لاعب${remaining > 1 ? 'ين' : ''} ${remaining > 1 ? 'آخرين' : 'آخر'}`;
+            btn.innerHTML = `${t('chooseMore')} ${remaining} ${remaining > 1 ? t('morePlayers') : t('morePlayer')}`;
             btn.style.opacity = '0.6';
         }
     }
@@ -2332,11 +2565,10 @@
         const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
         
         if (currentVotes.length !== maxVotes) {
-            alert(`الرجاء اختيار ${maxVotes} لاعب${maxVotes > 1 ? 'ين' : ''}`);
+            alert(`${t('pleaseChoose')} ${maxVotes} ${maxVotes > 1 ? t('playersOnly') : t('playerOnly')}`);
             return;
         }
         
-        // Store votes
         currentVotes.forEach(votedForId => {
             allVotes.push({
                 voterId: voter.id,
@@ -2358,10 +2590,10 @@
             
             content.innerHTML = `
                 <div class="privacy-icon">🗳️</div>
-                <div class="privacy-text">دور التصويت لـ:</div>
+                <div class="privacy-text">${t('votingTurn')}</div>
                 <div class="next-player-name">${nextVoter.name}</div>
                 <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="voterReadyBtn">
-                    ✅ أنا ${nextVoter.name} - جاهز!
+                    ✅ ${currentLang === 'ar' ? 'أنا' : "I'm"} ${nextVoter.name} - ${t('imReady')}
                 </button>
             `;
             
@@ -2384,10 +2616,10 @@
         AudioManager.playDrama();
         
         const texts = [
-            'من هو المحتال؟',
-            'هل نجحتم في كشفه؟',
-            'اللحظة الحاسمة...',
-            'استعدوا للمفاجأة!'
+            t('whoIsImposter'),
+            t('didYouCatch'),
+            t('decisiveMoment'),
+            t('getReady')
         ];
         
         let textIndex = 0;
@@ -2407,7 +2639,7 @@
         AudioManager.playDrama();
         
         const container = document.querySelector('.suspense-container');
-        container.innerHTML = '<h1>🎭 المحتال كان...</h1>';
+        container.innerHTML = `<h1>🎭 ${t('imposterWas')}</h1>`;
         
         setTimeout(() => {
             currentGame.imposters.forEach((imposterId, index) => {
@@ -2423,12 +2655,11 @@
                 }, index * 1000);
             });
             
-            // Add continue button after revealing all imposters
             setTimeout(() => {
                 const continueBtn = document.createElement('button');
                 continueBtn.className = 'btn btn-success';
                 continueBtn.style.marginTop = '30px';
-                continueBtn.innerHTML = '📊 عرض النتائج';
+                continueBtn.innerHTML = `📊 ${t('showResults')}`;
                 continueBtn.onclick = calculateResults;
                 container.appendChild(continueBtn);
                 
@@ -2438,12 +2669,11 @@
     }
 
     // ===============================
-    // SCORING - NEW CLEAR SYSTEM
+    // SCORING
     // ===============================
     function calculateResults() {
         const results = [];
         
-        // Count votes against each player
         const voteCounts = {};
         currentGame.playerCards.forEach(p => {
             voteCounts[p.id] = 0;
@@ -2453,7 +2683,6 @@
             voteCounts[vote.votedFor] = (voteCounts[vote.votedFor] || 0) + 1;
         });
         
-        // Calculate scores for each player
         currentGame.playerCards.forEach(player => {
             let score = 0;
             let breakdown = [];
@@ -2461,36 +2690,31 @@
             const regularPlayersCount = currentGame.playerCards.length - currentGame.imposterCount;
             
             if (player.isImposter) {
-                // IMPOSTER SCORING
-                // Imposters want to avoid detection
                 if (votesAgainst === 0) {
                     score = 30;
-                    breakdown.push('+30 (لم يشك بك أحد!)');
+                    breakdown.push(`+30 (${t('noOneDoubtedYou')})`);
                 } else if (votesAgainst < regularPlayersCount / 2) {
                     score = 20;
-                    breakdown.push('+20 (شك بك القليل فقط)');
+                    breakdown.push(`+20 (${t('fewDoubtedYou')})`);
                 } else {
                     score = 0;
-                    breakdown.push('+0 (تم كشفك!)');
+                    breakdown.push(`+0 (${t('youWereCaught')})`);
                 }
             } else {
-                // REGULAR PLAYER SCORING
-                // Get this player's votes
                 const playerVotes = allVotes.filter(v => v.voterId === player.id);
                 
                 playerVotes.forEach(vote => {
                     const votedForIsImposter = currentGame.imposters.includes(vote.votedFor);
                     if (votedForIsImposter) {
                         score += 10;
-                        breakdown.push('+10 (صوت صحيح على محتال)');
+                        breakdown.push(`+10 (${t('correctVoteOnImposter')})`);
                     } else {
                         score -= 5;
-                        breakdown.push('-5 (صوت خاطئ على بريء)');
+                        breakdown.push(`-5 (${t('wrongVoteOnInnocent')})`);
                     }
                 });
             }
             
-            // Update session player score (allow negative totals)
             const sessionPlayer = currentSession.players.find(p => p.id === player.id);
             if (sessionPlayer) {
                 sessionPlayer.totalScore = (sessionPlayer.totalScore || 0) + score;
@@ -2507,19 +2731,18 @@
             });
         });
         
-        // Store scores for potential reset
         currentGame.gameScores = results.map(r => ({ id: r.id, score: r.score }));
         
-        // Determine winner
         const impostersCaught = currentGame.imposters.filter(id => {
             const votes = voteCounts[id] || 0;
             const regularPlayersCount = currentGame.playerCards.length - currentGame.imposterCount;
             return votes >= regularPlayersCount / 2;
         }).length;
         
-        const winner = impostersCaught >= currentGame.imposterCount / 2 ? 'اللاعبون العاديون' : 'المحتالون';
+        const winner = impostersCaught >= currentGame.imposterCount / 2 
+            ? (currentLang === 'ar' ? 'اللاعبون العاديون' : 'Regular Players')
+            : (currentLang === 'ar' ? 'المحتالون' : 'Imposters');
         
-        // Save game to history
         currentSession.totalGames = (currentSession.totalGames || 0) + 1;
         if (!currentSession.gameHistory) currentSession.gameHistory = [];
         currentSession.gameHistory.push({
@@ -2538,7 +2761,7 @@
     function showResults(results, winner) {
         showScreen('resultsScreen');
         
-        const playersWon = winner === 'اللاعبون العاديون';
+        const playersWon = winner === (currentLang === 'ar' ? 'اللاعبون العاديون' : 'Regular Players');
         
         if (playersWon) {
             Confetti.create();
@@ -2549,32 +2772,30 @@
         
         let html = `
             <div class="winner-banner" style="${!playersWon ? 'background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);' : ''}">
-                ${playersWon 
-                    ? '🎉 اللاعبون العاديون فازوا! تم كشف المحتالين!' 
-                    : '😈 المحتالون فازوا! نجحوا في الخداع!'}
+                ${playersWon ? `🎉 ${t('playersWon')}` : `😈 ${t('impostersWon')}`}
             </div>
             
             <div style="background: #f8f9fa; padding: 15px; border-radius: 12px; margin: 15px 0;">
-                <h4 style="margin-bottom: 10px;">📝 الكلمة كانت:</h4>
+                <h4 style="margin-bottom: 10px;">📝 ${t('theWordWas')}</h4>
                 <div style="font-size: 28px; font-weight: bold; color: #667eea;">${currentGame.word}</div>
             </div>
             
-            <h3 style="margin: 20px 0;">🎭 المحتالون:</h3>
+            <h3 style="margin: 20px 0;">🎭 ${t('imposters')}</h3>
             ${imposters.map(i => `
                 <div class="player-item" style="background: ${i.score > 0 ? '#e8f5e9' : '#ffebee'};">
                     <span class="player-name">${i.name} 🎭</span>
-                    <div style="text-align: left;">
+                    <div style="text-align: ${currentLang === 'ar' ? 'left' : 'right'};">
                         <span style="color: #999; font-size: 12px; display: block;">
-                            ${i.votesAgainst} صوت ضده
+                            ${i.votesAgainst} ${t('votesAgainst')}
                         </span>
                         <span style="color: ${i.score > 0 ? '#4caf50' : '#ff0844'}; font-weight: bold;">
-                            ${i.score >= 0 ? '+' : ''}${i.score} نقطة
+                            ${i.score >= 0 ? '+' : ''}${i.score} ${t('point')}
                         </span>
                     </div>
                 </div>
             `).join('')}
             
-            <h3 style="margin: 20px 0;">📊 نقاط هذه الجولة:</h3>
+            <h3 style="margin: 20px 0;">📊 ${t('roundScores')}</h3>
             <div class="score-list">
                 ${sorted.map((player, index) => {
                     const rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
@@ -2594,7 +2815,7 @@
                 }).join('')}
             </div>
             
-            <h3 style="margin: 20px 0;">🏆 الترتيب الإجمالي:</h3>
+            <h3 style="margin: 20px 0;">🏆 ${t('totalRanking')}</h3>
             <div class="score-list">
                 ${[...currentSession.players]
                     .sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0))
@@ -2606,7 +2827,7 @@
                                 <span class="score-rank">${rank}</span>
                                 <span class="score-name">${player.name}</span>
                                 <span class="score-points" style="color: ${totalScore >= 0 ? '#667eea' : '#e74c3c'};">
-                                    ${totalScore} نقطة
+                                    ${totalScore} ${t('point')}
                                 </span>
                             </div>
                         `;
@@ -2631,10 +2852,21 @@
     // INITIALIZE
     // ===============================
     window.addEventListener('load', () => {
-        showScreen('homeScreen');
+        // Check for saved language preference
+        const savedLang = localStorage.getItem('imposterGameLang');
+        if (savedLang) {
+            currentLang = savedLang;
+            document.documentElement.lang = savedLang;
+            document.documentElement.dir = savedLang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('en', savedLang === 'en');
+            updateTranslations();
+            updateCategorySelect();
+            showScreen('homeScreen');
+        } else {
+            showScreen('langScreen');
+        }
     });
     
-    // Prevent errors on undefined elements
     window.onerror = function(msg, url, lineNo, columnNo, error) {
         console.log('Error: ' + msg);
         return true;
