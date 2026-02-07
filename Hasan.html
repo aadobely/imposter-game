@@ -287,7 +287,7 @@
     }
 
     .imposter-card {
-        background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
 
     .kids-card {
@@ -778,7 +778,7 @@
                     🇸🇾 العربية
                 </button>
                 <button class="btn btn-secondary" onclick="setLanguage('en')" style="font-size: 24px;">
-                    🇬🇧 English
+                    🇨🇦 English
                 </button>
             </div>
         </div>
@@ -1119,21 +1119,26 @@
                     <p>3️⃣ اللاعبون العاديون يرون نفس الكلمة</p>
                     <p>4️⃣ المحتالون يرون التلميح فقط (أو لا شيء)</p>
                     <p>5️⃣ ابدأوا النقاش وحاولوا كشف المحتال</p>
-                    <p>6️⃣ كل لاعب يصوت على المشتبه به</p>
+                    <p>6️⃣ كل لاعب يصوت على المشتبه بهم</p>
                     <p>7️⃣ كشف المحتال في نهاية التصويت!</p>
                     
                     <div class="scoring-rules">
                         <h4>🎯 نظام النقاط:</h4>
-                        <p><strong>للمحتال:</strong></p>
+                        <p><strong>نقاط المحتال الأساسية:</strong></p>
                         <p class="positive">• لم يصوت عليه أحد: +30 نقطة</p>
                         <p class="positive">• صوت عليه أقل من النصف: +20 نقطة</p>
                         <p class="negative">• صوت عليه النصف أو أكثر: 0 نقطة</p>
+                        <br>
+                        <p><strong>نقاط تصويت المحتال:</strong></p>
+                        <p class="positive">• صوت على محتال زميل: +5 نقاط</p>
+                        <p class="negative">• صوت على بريء: -5 نقاط</p>
+                        <p>• صوت على نفسه: 0 نقاط</p>
                         <br>
                         <p><strong>للاعب العادي:</strong></p>
                         <p class="positive">• صوت على محتال صحيح: +10 نقاط</p>
                         <p class="negative">• صوت على بريء: -5 نقاط</p>
                         <br>
-                        <p><strong>ملاحظة:</strong> المحتال يصوت على شخص واحد فقط (للتمويه)</p>
+                        <p><strong>ملاحظة:</strong> المحتال يرى اسمه ويستطيع اختياره للتمويه</p>
                     </div>
                 </div>
             `
@@ -1295,16 +1300,21 @@
                     
                     <div class="scoring-rules">
                         <h4>🎯 Scoring System:</h4>
-                        <p><strong>For Imposter:</strong></p>
+                        <p><strong>Imposter Base Score:</strong></p>
                         <p class="positive">• No one voted against: +30 points</p>
                         <p class="positive">• Less than half voted against: +20 points</p>
                         <p class="negative">• Half or more voted against: 0 points</p>
+                        <br>
+                        <p><strong>Imposter Voting Score:</strong></p>
+                        <p class="positive">• Voted for fellow imposter: +5 points</p>
+                        <p class="negative">• Voted for innocent: -5 points</p>
+                        <p>• Voted for self: 0 points</p>
                         <br>
                         <p><strong>For Regular Player:</strong></p>
                         <p class="positive">• Voted for an imposter: +10 points</p>
                         <p class="negative">• Voted for innocent: -5 points</p>
                         <br>
-                        <p><strong>Note:</strong> Imposter votes for only one person (to blend in)</p>
+                        <p><strong>Note:</strong> Imposter sees their own name and can vote for it to blend in</p>
                     </div>
                 </div>
             `
@@ -2047,8 +2057,8 @@
         
         const selectedWord = words[Math.floor(Math.random() * words.length)];
         
-        const shuffled = [...currentSession.players].sort(() => Math.random() - 0.5);
-        const imposters = shuffled.slice(0, imposterCount).map(p => p.id);
+        // Balanced imposter selection - avoid picking same person repeatedly
+        const imposters = selectBalancedImposters(imposterCount);
         
         // Get the right word and hint based on language
         const word = currentLang === 'en' ? selectedWord.wordEn : selectedWord.word;
@@ -2077,6 +2087,64 @@
         selectedFirstPlayerIndex = -1;
         
         showFirstPlayerSelection();
+    }
+    
+    // Balanced imposter selection to avoid picking same person repeatedly
+    function selectBalancedImposters(count) {
+        // Initialize or get imposter history for this session
+        if (!currentSession.imposterHistory) {
+            currentSession.imposterHistory = {};
+            currentSession.players.forEach(p => {
+                currentSession.imposterHistory[p.id] = 0;
+            });
+        }
+        
+        // Make sure all players are in the history
+        currentSession.players.forEach(p => {
+            if (currentSession.imposterHistory[p.id] === undefined) {
+                currentSession.imposterHistory[p.id] = 0;
+            }
+        });
+        
+        // Calculate weights - players who were imposter more get lower weight
+        const players = [...currentSession.players];
+        const maxCount = Math.max(...Object.values(currentSession.imposterHistory), 1);
+        
+        // Create weighted list
+        let weightedPlayers = [];
+        players.forEach(player => {
+            const timesImposter = currentSession.imposterHistory[player.id] || 0;
+            // Weight is inverse of times they were imposter (more weight = more likely)
+            // Someone who was imposter 0 times gets weight 3, 1 time gets 2, 2+ times gets 1
+            const weight = Math.max(1, 4 - timesImposter);
+            for (let i = 0; i < weight; i++) {
+                weightedPlayers.push(player);
+            }
+        });
+        
+        // Select imposters from weighted list
+        const selectedImposters = [];
+        while (selectedImposters.length < count && weightedPlayers.length > 0) {
+            const randomIndex = Math.floor(Math.random() * weightedPlayers.length);
+            const selected = weightedPlayers[randomIndex];
+            
+            // Check if already selected
+            if (!selectedImposters.includes(selected.id)) {
+                selectedImposters.push(selected.id);
+                // Remove all instances of this player from weighted list
+                weightedPlayers = weightedPlayers.filter(p => p.id !== selected.id);
+            }
+        }
+        
+        // Update history
+        selectedImposters.forEach(id => {
+            currentSession.imposterHistory[id] = (currentSession.imposterHistory[id] || 0) + 1;
+        });
+        
+        // Save session with updated history
+        Storage.saveSession(currentSession);
+        
+        return selectedImposters;
     }
 
     // ===============================
@@ -2145,27 +2213,10 @@
             currentGame.playerCards = reordered;
         }
         
-        const firstPlayer = currentGame.playerCards[0];
-        const privacyScreen = document.getElementById('privacyScreen');
-        const content = privacyScreen.querySelector('.privacy-content');
-        
-        content.innerHTML = `
-            <div class="privacy-icon">🎴</div>
-            <div class="privacy-text">${t('cardRevealFor')}</div>
-            <div class="next-player-name">${firstPlayer.name}</div>
-            <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="firstPlayerReadyBtn">
-                ✅ ${currentLang === 'ar' ? 'أنا' : "I'm"} ${firstPlayer.name} - ${t('imReady')}
-            </button>
-        `;
-        
-        privacyScreen.classList.add('active');
-        
-        document.getElementById('firstPlayerReadyBtn').onclick = function() {
-            privacyScreen.classList.remove('active');
-            currentPlayerIndex = 0;
-            showScreen('cardRevealScreen');
-            showNextPlayer();
-        };
+        // Go directly to card reveal without extra privacy screen
+        currentPlayerIndex = 0;
+        showScreen('cardRevealScreen');
+        showNextPlayer();
     }
 
     // ===============================
@@ -2227,48 +2278,14 @@
     function moveToNextPlayer() {
         AudioManager.playAlert();
         
-        const nextIndex = currentPlayerIndex + 1;
-        const privacyScreen = document.getElementById('privacyScreen');
-        const content = privacyScreen.querySelector('.privacy-content');
+        currentPlayerIndex++;
         
-        if (nextIndex < currentGame.playerCards.length) {
-            const nextPlayer = currentGame.playerCards[nextIndex];
-            content.innerHTML = `
-                <div class="privacy-icon">📱</div>
-                <div class="privacy-text">${t('passDeviceTo')}</div>
-                <div class="next-player-name">${nextPlayer.name}</div>
-                <div class="privacy-text" style="font-size: 18px; opacity: 0.8; margin-top: 20px;">
-                    🙈 ${t('dontLook')}
-                </div>
-                <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="nextPlayerReadyBtn">
-                    ✅ ${currentLang === 'ar' ? 'أنا' : "I'm"} ${nextPlayer.name} - ${t('imReady')}
-                </button>
-            `;
-            
-            privacyScreen.classList.add('active');
-            
-            document.getElementById('nextPlayerReadyBtn').onclick = function() {
-                privacyScreen.classList.remove('active');
-                currentPlayerIndex++;
-                showNextPlayer();
-            };
+        if (currentPlayerIndex < currentGame.playerCards.length) {
+            // Go directly to next player without privacy screen
+            showNextPlayer();
         } else {
-            content.innerHTML = `
-                <div class="privacy-icon">💬</div>
-                <div class="privacy-text">${t('everyoneSawCards')}</div>
-                <div class="next-player-name">${t('discussionTime')}</div>
-                <button class="btn btn-success" style="margin-top: 30px; font-size: 20px;" id="startDiscussionBtn">
-                    ▶️ ${t('startDiscussion')}
-                </button>
-            `;
-            
-            privacyScreen.classList.add('active');
-            
-            document.getElementById('startDiscussionBtn').onclick = function() {
-                privacyScreen.classList.remove('active');
-                currentPlayerIndex++;
-                showNextPlayer();
-            };
+            // All done, start discussion
+            startDiscussion();
         }
     }
 
@@ -2486,19 +2503,26 @@
         const voter = currentGame.playerCards[currentVoterIndex];
         document.getElementById('currentVoter').textContent = voter.name;
         
+        // Check if voter is imposter using their ID
         const voterIsImposter = currentGame.imposters.includes(voter.id);
         currentVotes = [];
+        
+        // Everyone votes for the same number of players (imposterCount)
+        const votesNeeded = currentGame.imposterCount;
         
         const instructionsDiv = document.getElementById('votingInstructions');
         
         if (voterIsImposter) {
+            // Show imposter that they are imposter
             instructionsDiv.innerHTML = `
                 <div class="imposter-vote-info">
-                    🎭 ${t('youAreImposterVote')} ${t('voteForOne')}
+                    🎭 ${t('youAreImposterVote')}
+                </div>
+                <div class="votes-remaining" style="margin-top: 10px;">
+                    ${t('choose')} <strong>${votesNeeded}</strong> ${votesNeeded > 1 ? t('playersYouThink') : t('playerYouThink')}
                 </div>
             `;
         } else {
-            const votesNeeded = currentGame.imposterCount;
             instructionsDiv.innerHTML = `
                 <div class="votes-remaining">
                     ${t('choose')} <strong>${votesNeeded}</strong> ${votesNeeded > 1 ? t('playersYouThink') : t('playerYouThink')}
@@ -2509,24 +2533,40 @@
         const grid = document.getElementById('voteGrid');
         grid.innerHTML = '';
         
+        // Store votesNeeded in a data attribute for use in toggleVote
+        grid.dataset.maxVotes = votesNeeded;
+        grid.dataset.voterId = voter.id;
+        grid.dataset.voterIsImposter = voterIsImposter ? 'true' : 'false';
+        
         currentGame.playerCards.forEach(player => {
-            if (player.id === voter.id) return;
+            // Regular players don't see their own name
+            // Imposters see ALL names including their own (for blending in)
+            if (!voterIsImposter && player.id === voter.id) return;
             
             const card = document.createElement('div');
             card.className = 'vote-card';
             card.dataset.playerId = player.id;
-            card.onclick = () => toggleVote(card, player.id, voterIsImposter);
+            
+            // Mark if this is the voter's own card (for imposters)
+            const isSelf = player.id === voter.id;
+            if (isSelf) {
+                card.dataset.isSelf = 'true';
+                card.style.borderStyle = 'dashed';
+            }
+            
+            card.onclick = () => toggleVote(card, player.id);
             card.innerHTML = `
-                <div class="vote-card-name">${player.name}</div>
+                <div class="vote-card-name">${player.name}${isSelf ? ' (أنت)' : ''}</div>
             `;
             grid.appendChild(card);
         });
         
-        updateVoteButton(voterIsImposter);
+        updateVoteButton();
     }
 
-    function toggleVote(cardElement, playerId, voterIsImposter) {
-        const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
+    function toggleVote(cardElement, playerId) {
+        const grid = document.getElementById('voteGrid');
+        const maxVotes = parseInt(grid.dataset.maxVotes) || 1;
         
         if (currentVotes.includes(playerId)) {
             currentVotes = currentVotes.filter(id => id !== playerId);
@@ -2540,11 +2580,12 @@
             }
         }
         
-        updateVoteButton(voterIsImposter);
+        updateVoteButton();
     }
 
-    function updateVoteButton(voterIsImposter) {
-        const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
+    function updateVoteButton() {
+        const grid = document.getElementById('voteGrid');
+        const maxVotes = parseInt(grid.dataset.maxVotes) || 1;
         const btn = document.getElementById('submitVoteBtn');
         
         if (currentVotes.length === maxVotes) {
@@ -2560,21 +2601,25 @@
     }
 
     function submitCurrentVote() {
-        const voter = currentGame.playerCards[currentVoterIndex];
-        const voterIsImposter = currentGame.imposters.includes(voter.id);
-        const maxVotes = voterIsImposter ? 1 : currentGame.imposterCount;
+        const grid = document.getElementById('voteGrid');
+        const maxVotes = parseInt(grid.dataset.maxVotes) || 1;
         
         if (currentVotes.length !== maxVotes) {
             alert(`${t('pleaseChoose')} ${maxVotes} ${maxVotes > 1 ? t('playersOnly') : t('playerOnly')}`);
             return;
         }
         
+        const voter = currentGame.playerCards[currentVoterIndex];
+        const voterIsImposter = currentGame.imposters.includes(voter.id);
+        
+        // Store each vote with full info
         currentVotes.forEach(votedForId => {
             allVotes.push({
                 voterId: voter.id,
                 voterName: voter.name,
                 voterIsImposter: voterIsImposter,
-                votedFor: votedForId
+                votedFor: votedForId,
+                votedForName: currentGame.playerCards.find(p => p.id === votedForId)?.name || 'Unknown'
             });
         });
         
@@ -2641,17 +2686,24 @@
         const container = document.querySelector('.suspense-container');
         container.innerHTML = `<h1>🎭 ${t('imposterWas')}</h1>`;
         
+        // Get the actual imposter names from the imposters array
+        const imposterNames = [];
+        currentGame.imposters.forEach(imposterId => {
+            // Search in the original session players, not the reordered playerCards
+            const player = currentSession.players.find(p => p.id === imposterId);
+            if (player) {
+                imposterNames.push(player.name);
+            }
+        });
+        
         setTimeout(() => {
-            currentGame.imposters.forEach((imposterId, index) => {
+            imposterNames.forEach((imposterName, index) => {
                 setTimeout(() => {
-                    const imposter = currentGame.playerCards.find(p => p.id === imposterId);
-                    if (imposter) {
-                        const revealDiv = document.createElement('div');
-                        revealDiv.className = 'reveal-imposter';
-                        revealDiv.innerHTML = `<h2 style="font-size: 48px; color: #ff0844;">🎭 ${imposter.name}!</h2>`;
-                        container.appendChild(revealDiv);
-                        AudioManager.playAlert();
-                    }
+                    const revealDiv = document.createElement('div');
+                    revealDiv.className = 'reveal-imposter';
+                    revealDiv.innerHTML = `<h2 style="font-size: 48px; color: #667eea;">🎭 ${imposterName}!</h2>`;
+                    container.appendChild(revealDiv);
+                    AudioManager.playAlert();
                 }, index * 1000);
             });
             
@@ -2664,7 +2716,7 @@
                 container.appendChild(continueBtn);
                 
                 Confetti.create();
-            }, (currentGame.imposters.length * 1000) + 500);
+            }, (imposterNames.length * 1000) + 500);
         }, 1000);
     }
 
@@ -2674,22 +2726,35 @@
     function calculateResults() {
         const results = [];
         
-        const voteCounts = {};
-        currentGame.playerCards.forEach(p => {
-            voteCounts[p.id] = 0;
+        // Count votes against each player (from regular players only, excluding self-votes)
+        const regularPlayerVoteCounts = {};
+        currentSession.players.forEach(p => {
+            regularPlayerVoteCounts[p.id] = 0;
         });
+        
+        // Debug: log all votes
+        console.log('All votes:', allVotes);
+        console.log('Imposters:', currentGame.imposters);
         
         allVotes.forEach(vote => {
-            voteCounts[vote.votedFor] = (voteCounts[vote.votedFor] || 0) + 1;
+            // Only count votes from non-imposters, and not voting for themselves
+            if (!vote.voterIsImposter && vote.voterId !== vote.votedFor && regularPlayerVoteCounts[vote.votedFor] !== undefined) {
+                regularPlayerVoteCounts[vote.votedFor]++;
+            }
         });
         
-        currentGame.playerCards.forEach(player => {
+        console.log('Vote counts (regular players only, no self-votes):', regularPlayerVoteCounts);
+        
+        const regularPlayersCount = currentSession.players.length - currentGame.imposterCount;
+        
+        currentSession.players.forEach(player => {
             let score = 0;
             let breakdown = [];
-            const votesAgainst = voteCounts[player.id] || 0;
-            const regularPlayersCount = currentGame.playerCards.length - currentGame.imposterCount;
+            const votesAgainst = regularPlayerVoteCounts[player.id] || 0;
+            const isImposter = currentGame.imposters.includes(player.id);
             
-            if (player.isImposter) {
+            if (isImposter) {
+                // Imposter base scoring - only based on votes from regular players
                 if (votesAgainst === 0) {
                     score = 30;
                     breakdown.push(`+30 (${t('noOneDoubtedYou')})`);
@@ -2700,10 +2765,38 @@
                     score = 0;
                     breakdown.push(`+0 (${t('youWereCaught')})`);
                 }
+                
+                // Imposter also gets/loses points for their votes
+                const playerVotes = allVotes.filter(v => v.voterId === player.id);
+                playerVotes.forEach(vote => {
+                    // Skip if voted for self - no points
+                    if (vote.votedFor === player.id) {
+                        breakdown.push(`0 (${currentLang === 'ar' ? 'صوت لنفسه' : 'Voted for self'})`);
+                        return;
+                    }
+                    
+                    const votedForIsImposter = currentGame.imposters.includes(vote.votedFor);
+                    if (votedForIsImposter) {
+                        // Voted for fellow imposter - bonus!
+                        score += 5;
+                        breakdown.push(`+5 (${currentLang === 'ar' ? 'صوت لمحتال زميل' : 'Fellow imposter'})`);
+                    } else {
+                        // Voted for innocent - penalty
+                        score -= 5;
+                        breakdown.push(`-5 (${t('wrongVoteOnInnocent')})`);
+                    }
+                });
             } else {
+                // Regular player scoring
                 const playerVotes = allVotes.filter(v => v.voterId === player.id);
                 
                 playerVotes.forEach(vote => {
+                    // Skip if voted for self
+                    if (vote.votedFor === player.id) {
+                        // No points for voting for yourself
+                        return;
+                    }
+                    
                     const votedForIsImposter = currentGame.imposters.includes(vote.votedFor);
                     if (votedForIsImposter) {
                         score += 10;
@@ -2713,8 +2806,14 @@
                         breakdown.push(`-5 (${t('wrongVoteOnInnocent')})`);
                     }
                 });
+                
+                // If no valid votes were recorded for this player
+                if (breakdown.length === 0) {
+                    breakdown.push(`0`);
+                }
             }
             
+            // Update session player score
             const sessionPlayer = currentSession.players.find(p => p.id === player.id);
             if (sessionPlayer) {
                 sessionPlayer.totalScore = (sessionPlayer.totalScore || 0) + score;
@@ -2724,7 +2823,7 @@
             results.push({
                 id: player.id,
                 name: player.name,
-                isImposter: player.isImposter,
+                isImposter: isImposter,
                 score: score,
                 breakdown: breakdown,
                 votesAgainst: votesAgainst
@@ -2733,9 +2832,9 @@
         
         currentGame.gameScores = results.map(r => ({ id: r.id, score: r.score }));
         
+        // Calculate who won (based on regular player votes only)
         const impostersCaught = currentGame.imposters.filter(id => {
-            const votes = voteCounts[id] || 0;
-            const regularPlayersCount = currentGame.playerCards.length - currentGame.imposterCount;
+            const votes = regularPlayerVoteCounts[id] || 0;
             return votes >= regularPlayersCount / 2;
         }).length;
         
