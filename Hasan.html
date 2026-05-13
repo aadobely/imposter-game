@@ -95,7 +95,8 @@
         transform: scale(1.08);
         outline: none;
     }
-    body.dark .btn-abort-corner { background: rgba(255,255,255,0.15); color: #eaeaea; }
+    body.dark .btn-abort-corner { background: rgba(255,255,255,0.10); color: #c8c8d0; opacity: 0.75; }
+    body.dark .btn-abort-corner:hover, body.dark .btn-abort-corner:focus { color: #f0f0f5; opacity: 1; }
 
     @keyframes fadeIn {
         from { opacity: 0; }
@@ -1090,6 +1091,7 @@
         <button class="btn btn-success" onclick="openHallOfFame()">⭐ <span data-t="hallOfFame"></span></button>
         <button class="btn btn-secondary" onclick="openManageCategories()">📚 <span data-t="manageCategories"></span></button>
         <button class="btn btn-success" onclick="showScreen('howToPlayScreen')">❓ <span data-t="howToPlay"></span></button>
+        <button class="btn btn-secondary" onclick="showLatestUpdates()">✨ <span data-t="latestUpdates"></span></button>
     </div>
 
     <!-- Sessions List Screen -->
@@ -1264,6 +1266,13 @@
         <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 <span data-t="back"></span></button>
     </div>
 
+    <!-- Latest Updates Screen -->
+    <div id="latestUpdatesScreen" class="screen">
+        <h1>✨ <span data-t="latestUpdates"></span></h1>
+        <div id="latestUpdatesBody" class="tutorial-content"></div>
+        <button class="btn btn-secondary" onclick="showScreen('homeScreen')">🔙 <span data-t="back"></span></button>
+    </div>
+
     <!-- Manage Categories Screen -->
     <div id="manageCategoriesScreen" class="screen">
         <h1>📚 <span data-t="manageCategories"></span></h1>
@@ -1381,7 +1390,7 @@
     </div>
 </div>
 
-<!-- Email Signup Modal (Formspree) -->
+<!-- Email Signup Modal (Formspree) — mandatory; no skip option -->
 <div id="emailSignupModal" class="modal">
     <div class="modal-content">
         <div class="modal-title">📬 <span data-t="emailSignupTitle"></span></div>
@@ -1389,7 +1398,6 @@
         <input type="email" id="emailSignupInput" placeholder="you@example.com" autocomplete="email" style="margin: 10px 0;">
         <div id="emailSignupError" style="color: #e74c3c; font-size: 14px; min-height: 18px; margin: 6px 0;"></div>
         <button class="btn btn-success" id="emailSignupSubmit">✉️ <span data-t="emailSignupSubmit"></span></button>
-        <button class="btn btn-secondary" id="emailSignupSkip">⏭️ <span data-t="emailSignupSkip"></span></button>
     </div>
 </div>
 
@@ -1663,6 +1671,7 @@
             roleDoubleAgent: "عميل مزدوج",
             roleFakeImposter: "محتال مزيف",
             whatsNewTitle: "ما الجديد؟",
+            latestUpdates: "آخر التحديثات",
             shareResults: "مشاركة النتائج",
             resultsShared: "تم نسخ النتائج 📋",
             mvpOfSession: "نجم الجلسة",
@@ -1712,11 +1721,10 @@
             hasanWrongPwd: "كلمة المرور غير صحيحة",
             hasanUnlocked: "تم الفتح بنجاح ✓",
             unlock: "فتح",
-            emailSignupTitle: "ابقَ على اطلاع",
-            emailSignupBody: "اشترك لتصلك إشعارات بالميزات الجديدة وتحديثات اللعبة. اختياري ولن نشاركه مع أحد.",
-            emailSignupSubmit: "اشترك",
-            emailSignupSkip: "ربما لاحقاً",
-            emailSignupOk: "شكراً! تم تسجيلك.",
+            emailSignupTitle: "تسجيل اللاعب",
+            emailSignupBody: "يرجى إدخال بريدك الإلكتروني للمتابعة. ستصلك إشعارات بالميزات الجديدة وتحديثات اللعبة. لن نشاركه مع أحد.",
+            emailSignupSubmit: "تسجيل والمتابعة",
+            emailSignupOk: "شكراً! مرحباً بك.",
             emailSignupBadFormat: "صيغة الإيميل غير صحيحة",
             emailSignupFail: "فشل الإرسال، حاول لاحقاً",
             cat_syrian_food: "🍲 أكلات سورية",
@@ -2046,6 +2054,7 @@
             roleDoubleAgent: "Double Agent",
             roleFakeImposter: "Fake Imposter",
             whatsNewTitle: "What's New",
+            latestUpdates: "Latest Updates",
             shareResults: "Share Results",
             resultsShared: "Results copied 📋",
             mvpOfSession: "Session MVP",
@@ -2095,11 +2104,10 @@
             hasanWrongPwd: "Incorrect password",
             hasanUnlocked: "Unlocked successfully ✓",
             unlock: "Unlock",
-            emailSignupTitle: "Stay in the loop",
-            emailSignupBody: "Get notified about new features and game updates. Optional — we won't share your email.",
-            emailSignupSubmit: "Subscribe",
-            emailSignupSkip: "Maybe later",
-            emailSignupOk: "Thanks! You're subscribed.",
+            emailSignupTitle: "Player Sign-up",
+            emailSignupBody: "Please enter your email to continue. You'll get notified about new features and updates. We won't share it.",
+            emailSignupSubmit: "Sign up & continue",
+            emailSignupOk: "Thanks! Welcome.",
             emailSignupBadFormat: "Invalid email format",
             emailSignupFail: "Submission failed, try again later",
             cat_syrian_food: "🍲 Syrian Food",
@@ -3176,10 +3184,8 @@
         // Show home screen if on language screen
         if (document.getElementById('langScreen').classList.contains('active')) {
             showScreen('homeScreen');
-            if (typeof shouldShowEmailSignup === 'function' && shouldShowEmailSignup()) {
-                setTimeout(() => {
-                    if (!document.querySelector('.modal.active')) showEmailSignup();
-                }, 1200);
+            if (typeof isEmailRegistered === 'function' && !isEmailRegistered()) {
+                setTimeout(showEmailSignup, 500);
             }
         }
     }
@@ -5779,39 +5785,71 @@
     }
 
     // ===============================
-    // WHAT'S NEW (first run)
+    // WHAT'S NEW (auto-shown when version changes)
+    // Also reusable as a dedicated "Latest Updates" page from the home screen.
     // ===============================
-    const APP_VERSION = '2.0';
+    const APP_VERSION = '2.1';
+    const UPDATES_AR = [
+        '🎮 7 أنماط لعب: كلاسيكي، معكوس، عميل مزدوج، تسلسل الكلمات، قنبلة موقوتة، محتالون مزيفون، صراحة أو جرأة',
+        '📖 شرح مفصل لكل نمط داخل صفحة "كيف تلعب"',
+        '📚 15 فئة كلمات جديدة + 400 كلمة مع مستويات صعوبة (سهل/متوسط/صعب)',
+        '✏️ إنشاء فئاتك المخصصة (عربي/إنجليزي) + وضع "خلطة عشوائية"',
+        '🏆 13 إنجاز قابل للفتح + لوحة شرف عبر الجلسات',
+        '⚡ قدرات خاصة: تلميح إضافي، تخطي تصويت، نظرة خاطفة',
+        '🌓 وضع ليلي مع تباين محسّن للقراءة',
+        '😊 صور شخصية إيموجي لكل لاعب (45 خياراً)',
+        '📤 مشاركة النتائج عبر الحافظة + زر بداية سريعة',
+        '🔔 إشعارات Toast أنيقة بدلاً من نوافذ المتصفح',
+        '🛡️ إصلاح ثغرة الكشف عند تعدد المحتالين (لم تعد تظهر بيانات قديمة)',
+        '🔒 تحسينات أمنية: حماية من XSS ومعرّفات لاعبين فريدة',
+        '✖ زر إنهاء سريع صغير لإلغاء الجولة في حال اخترت إعدادات خاطئة',
+        '📬 تسجيل البريد الإلكتروني لاستقبال تحديثات اللعبة',
+        '✨ صفحة "آخر التحديثات" يمكنك العودة إليها في أي وقت من القائمة الرئيسية'
+    ];
+    const UPDATES_EN = [
+        '🎮 7 game modes: Classic, Reverse, Double Agent, Word Association, Time Bomb, Fake Imposters, Truth or Dare',
+        '📖 Each mode now has a detailed explanation inside "How to Play"',
+        '📚 15 new word categories + 400 words with difficulty levels (easy/medium/hard)',
+        '✏️ Create your own custom categories (AR/EN) + "Mixed Bag" mode',
+        '🏆 13 unlockable achievements + cross-session Hall of Fame',
+        '⚡ Power-ups: Extra Hint, Skip Vote, Peek',
+        '🌓 Dark mode with improved readability',
+        '😊 Emoji avatars for every player (45 options)',
+        '📤 Share results via clipboard + Quick Start button',
+        '🔔 Sleek toast notifications replacing browser alerts',
+        '🛡️ Fixed multi-imposter reveal bug (stale data no longer leaks between rounds)',
+        '🔒 Security hardening: XSS protection and collision-resistant player IDs',
+        '✖ Small abort button to cancel a round if you picked wrong settings',
+        '📬 Email registration to receive game updates',
+        '✨ New "Latest Updates" page reachable anytime from the home screen'
+    ];
+    function getUpdatesList() {
+        return currentLang === 'ar' ? UPDATES_AR : UPDATES_EN;
+    }
     function maybeShowWhatsNew() {
         const seen = Storage.getRaw('imposterWhatsNewSeen', '');
         if (seen === APP_VERSION) return;
-        const featuresAr = [
-            '🎮 7 أنماط لعب جديدة: كلاسيكي، معكوس، عميل مزدوج، تسلسل الكلمات، قنبلة موقوتة، محتالون مزيفون، صراحة أو جرأة',
-            '📚 15 فئة كلمات جديدة وأكثر من 400 كلمة مع مستويات صعوبة',
-            '🏆 13 إنجاز قابل للفتح + لوحة شرف عبر الجلسات',
-            '⚡ قدرات خاصة: تلميح إضافي، تخطي تصويت، نظرة خاطفة',
-            '🌓 وضع ليلي وإشعارات أنيقة',
-            '😊 صور شخصية إيموجي لكل لاعب',
-            '✏️ إنشاء فئاتك المخصصة + خلطة عشوائية',
-            '📤 مشاركة النتائج + بداية سريعة'
-        ];
-        const featuresEn = [
-            '🎮 7 new game modes: Classic, Reverse, Double Agent, Word Association, Time Bomb, Fake Imposters, Truth or Dare',
-            '📚 15 new word categories and 400+ words with difficulty levels',
-            '🏆 13 unlockable achievements + cross-session Hall of Fame',
-            '⚡ Power-ups: Extra Hint, Skip Vote, Peek',
-            '🌓 Dark mode and elegant toast notifications',
-            '😊 Emoji avatars for every player',
-            '✏️ Create your own custom categories + Mixed Bag',
-            '📤 Share results + Quick Start'
-        ];
-        const features = currentLang === 'ar' ? featuresAr : featuresEn;
-        document.getElementById('whatsNewBody').innerHTML = features.map(f => `<div class="feature-list-item">${escapeHtml(f)}</div>`).join('');
+        document.getElementById('whatsNewBody').innerHTML = getUpdatesList()
+            .map(f => `<div class="feature-list-item">${escapeHtml(f)}</div>`).join('');
         document.getElementById('whatsNewModal').classList.add('active');
     }
     function closeWhatsNew() {
         Storage.setRaw('imposterWhatsNewSeen', APP_VERSION);
         document.getElementById('whatsNewModal').classList.remove('active');
+    }
+    // Opens the same content as a screen (not a modal) so the user can revisit
+    // it on demand from the home menu.
+    function showLatestUpdates() {
+        const body = document.getElementById('latestUpdatesBody');
+        if (!body) return;
+        const version = APP_VERSION;
+        body.innerHTML = `
+            <p class="muted-text" style="text-align:center; color:#666; margin-bottom:15px;">
+                ${currentLang === 'ar' ? 'الإصدار' : 'Version'} ${version}
+            </p>
+            ${getUpdatesList().map(f => `<div class="feature-list-item">${escapeHtml(f)}</div>`).join('')}
+        `;
+        showScreen('latestUpdatesScreen');
     }
 
     // ===============================
@@ -5863,14 +5901,19 @@
     }
 
     // ===============================
-    // EMAIL SIGNUP (Formspree)
+    // EMAIL SIGNUP (Formspree) — required to play
     // ===============================
     const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xeendkrq';
-    function shouldShowEmailSignup() {
-        return !localStorage.getItem('imposterEmailAsked');
+    function isEmailRegistered() {
+        // Only the submitted flag counts. Older 'asked' flag (skipped) is ignored
+        // so previously-skipped users get the new mandatory prompt.
+        return !!localStorage.getItem('imposterEmailSubmitted');
     }
-    function markEmailAsked() {
-        try { localStorage.setItem('imposterEmailAsked', '1'); } catch(e) {}
+    function markEmailSubmitted(email) {
+        try {
+            localStorage.setItem('imposterEmailSubmitted', '1');
+            if (email) localStorage.setItem('imposterEmail', email);
+        } catch(e) {}
     }
     function showEmailSignup() {
         document.getElementById('emailSignupModal').classList.add('active');
@@ -5902,8 +5945,10 @@
             });
             if (res.ok) {
                 if (typeof Toast !== 'undefined' && Toast.success) Toast.success(t('emailSignupOk'));
-                markEmailAsked();
+                markEmailSubmitted(email);
                 document.getElementById('emailSignupModal').classList.remove('active');
+                // After submission, surface What's New for first-time-after-signup users
+                setTimeout(maybeShowWhatsNew, 400);
             } else {
                 err.textContent = t('emailSignupFail');
             }
@@ -5912,10 +5957,6 @@
         } finally {
             btn.disabled = false;
         }
-    }
-    function _skipEmailSignup() {
-        markEmailAsked();
-        document.getElementById('emailSignupModal').classList.remove('active');
     }
 
     window.addEventListener('load', () => {
@@ -5931,12 +5972,12 @@
             updateCategorySelect();
             initQuickStartButton();
             showScreen('homeScreen');
-            setTimeout(maybeShowWhatsNew, 600);
-            // Offer email signup once, after the What's New modal has had time to settle
-            if (shouldShowEmailSignup()) {
-                setTimeout(() => {
-                    if (!document.querySelector('.modal.active')) showEmailSignup();
-                }, 2500);
+            // Email is mandatory: if not registered, block with signup modal.
+            // Otherwise show What's New (only once per app version).
+            if (!isEmailRegistered()) {
+                setTimeout(showEmailSignup, 400);
+            } else {
+                setTimeout(maybeShowWhatsNew, 600);
             }
         } else {
             showScreen('langScreen');
@@ -5955,12 +5996,10 @@
             if (e.key === 'Enter') _attemptHasanUnlock();
         });
 
-        // Wire email signup modal buttons
+        // Wire email signup modal buttons (no skip — submission is required)
         const eSubmit = document.getElementById('emailSignupSubmit');
-        const eSkip = document.getElementById('emailSignupSkip');
         const eInput = document.getElementById('emailSignupInput');
         if (eSubmit) eSubmit.addEventListener('click', _submitEmailSignup);
-        if (eSkip) eSkip.addEventListener('click', _skipEmailSignup);
         if (eInput) eInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') _submitEmailSignup();
         });
