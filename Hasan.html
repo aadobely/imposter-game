@@ -1331,6 +1331,30 @@
     </div>
 </div>
 
+<!-- Hasan Vault Unlock Modal -->
+<div id="hasanUnlockModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title" data-t="hasanUnlockTitle"></div>
+        <p style="margin: 10px 0; line-height: 1.6;" data-t="hasanLocked"></p>
+        <input type="password" id="hasanPwdInput" autocomplete="off" inputmode="numeric" style="margin: 10px 0;">
+        <div id="hasanPwdError" style="color: #e74c3c; font-size: 14px; min-height: 18px; margin: 6px 0;"></div>
+        <button class="btn btn-success" id="hasanUnlockBtn">🔓 <span data-t="unlock"></span></button>
+        <button class="btn btn-secondary" id="hasanUnlockCancelBtn">❌ <span data-t="cancel"></span></button>
+    </div>
+</div>
+
+<!-- Email Signup Modal (Formspree) -->
+<div id="emailSignupModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-title">📬 <span data-t="emailSignupTitle"></span></div>
+        <p style="margin: 10px 0; line-height: 1.6;" data-t="emailSignupBody"></p>
+        <input type="email" id="emailSignupInput" placeholder="you@example.com" autocomplete="email" style="margin: 10px 0;">
+        <div id="emailSignupError" style="color: #e74c3c; font-size: 14px; min-height: 18px; margin: 6px 0;"></div>
+        <button class="btn btn-success" id="emailSignupSubmit">✉️ <span data-t="emailSignupSubmit"></span></button>
+        <button class="btn btn-secondary" id="emailSignupSkip">⏭️ <span data-t="emailSignupSkip"></span></button>
+    </div>
+</div>
+
 <!-- Confirm Modal -->
 <div id="confirmModal" class="modal">
     <div class="modal-content confirm-modal-content">
@@ -1641,6 +1665,19 @@
             ach_partyAnimal_desc: "جرّب جميع أنماط اللعب",
 
             // Categories
+            cat_hasan: "🔒 حسن",
+            hasanLocked: "هذه فئة محمية. أدخل كلمة المرور للمتابعة:",
+            hasanUnlockTitle: "🔒 فتح فئة حسن",
+            hasanWrongPwd: "كلمة المرور غير صحيحة",
+            hasanUnlocked: "تم الفتح بنجاح ✓",
+            unlock: "فتح",
+            emailSignupTitle: "ابقَ على اطلاع",
+            emailSignupBody: "اشترك لتصلك إشعارات بالميزات الجديدة وتحديثات اللعبة. اختياري ولن نشاركه مع أحد.",
+            emailSignupSubmit: "اشترك",
+            emailSignupSkip: "ربما لاحقاً",
+            emailSignupOk: "شكراً! تم تسجيلك.",
+            emailSignupBadFormat: "صيغة الإيميل غير صحيحة",
+            emailSignupFail: "فشل الإرسال، حاول لاحقاً",
             cat_syrian_food: "🍲 أكلات سورية",
             cat_syrian_places: "🏛️ أماكن سورية",
             cat_arab_culture: "🎭 ثقافة عربية",
@@ -1705,6 +1742,40 @@
                         <p class="negative">• صوت على بريء: -5 نقاط</p>
                         <br>
                         <p><strong>ملاحظة:</strong> المحتال يرى اسمه ويستطيع اختياره للتمويه</p>
+                    </div>
+
+                    <div class="scoring-rules" style="margin-top: 20px;">
+                        <h4>🎮 أنماط اللعب:</h4>
+
+                        <p><strong>🎭 الكلاسيكي:</strong></p>
+                        <p>النمط الأصلي — الكل يرى الكلمة، المحتال يرى تلميحاً فقط (أو لا شيء). ناقشوا واكتشفوه.</p>
+                        <br>
+
+                        <p><strong>🔄 المعكوس:</strong></p>
+                        <p>المحتال هو الوحيد الذي يعرف الكلمة! اللاعبون العاديون يرون تلميحاً ويجب عليهم تخمين الكلمة الصحيحة في النهاية. يفوز المحتال إذا فشلوا في التخمين، ويفوز اللاعبون إذا نجحوا.</p>
+                        <br>
+
+                        <p><strong>🕵️ العميل المزدوج:</strong></p>
+                        <p>لاعب واحد يحصل على دور خاص — يعرف الكلمة <em>ويعرف من هو المحتال</em>. مهمته مساعدة المحتال على الهروب بطريقة خفية. <span class="positive">+15 نقطة</span> إذا نجح، <span class="negative">-10</span> إذا انكشف.</p>
+                        <br>
+
+                        <p><strong>🔗 تسلسل الكلمات:</strong></p>
+                        <p>كل لاعب في دوره يقول <em>كلمة واحدة</em> مرتبطة بالكلمة السرية. المحتال يجب أن يتأقلم ويقول كلمة تبدو طبيعية بدون أن يعرف الكلمة الأصلية. أصعب نمط على المحتال!</p>
+                        <br>
+
+                        <p><strong>💣 القنبلة الموقوتة:</strong></p>
+                        <p>مؤقت مشترك قصير (60 ثانية) للنقاش كله. عندما ينفد الوقت، اللاعب الذي كان يتكلم آخر مرة (أو يختار عشوائياً) يصبح المتهم الأساسي. يضيف توتراً وسرعة.</p>
+                        <br>
+
+                        <p><strong>🎭 المحتالون المزيفون:</strong></p>
+                        <p>1-2 لاعب يُخبَرون أنهم محتالون <em>لكن في الحقيقة يرون الكلمة الصحيحة</em>! المحتالون الفعليون يرون التلميح فقط. الفوضى مضمونة لأن أحداً لا يثق بأحد.</p>
+                        <br>
+
+                        <p><strong>😈 صراحة أو جرأة:</strong></p>
+                        <p>عند انكشاف المحتال، يجب عليه الإجابة على سؤال "صراحة" أو تنفيذ تحدي "جرأة" يُسحَب عشوائياً. كل الأسئلة مناسبة للعائلة.</p>
+                        <br>
+
+                        <p><strong>💡 نصيحة:</strong> جرب نمطاً مختلفاً كل جولة لتجديد المتعة.</p>
                     </div>
                 </div>
             `
@@ -1974,6 +2045,19 @@
             ach_partyAnimal_desc: "Try every game mode",
 
             // Categories
+            cat_hasan: "🔒 Hasan",
+            hasanLocked: "This is a protected category. Enter password to continue:",
+            hasanUnlockTitle: "🔒 Unlock Hasan Category",
+            hasanWrongPwd: "Incorrect password",
+            hasanUnlocked: "Unlocked successfully ✓",
+            unlock: "Unlock",
+            emailSignupTitle: "Stay in the loop",
+            emailSignupBody: "Get notified about new features and game updates. Optional — we won't share your email.",
+            emailSignupSubmit: "Subscribe",
+            emailSignupSkip: "Maybe later",
+            emailSignupOk: "Thanks! You're subscribed.",
+            emailSignupBadFormat: "Invalid email format",
+            emailSignupFail: "Submission failed, try again later",
             cat_syrian_food: "🍲 Syrian Food",
             cat_syrian_places: "🏛️ Syrian Places",
             cat_arab_culture: "🎭 Arab Culture",
@@ -2039,8 +2123,92 @@
                         <br>
                         <p><strong>Note:</strong> Imposter sees their own name and can vote for it to blend in</p>
                     </div>
+
+                    <div class="scoring-rules" style="margin-top: 20px;">
+                        <h4>🎮 Game Modes:</h4>
+
+                        <p><strong>🎭 Classic:</strong></p>
+                        <p>The original mode — everyone sees the word, the imposter sees only a hint (or nothing). Discuss and unmask them.</p>
+                        <br>
+
+                        <p><strong>🔄 Reverse:</strong></p>
+                        <p>The imposter is the <em>only one</em> who knows the word! Regular players get a hint and must collectively guess the secret word at the end. Imposters win if no one guesses correctly; regulars win if they do.</p>
+                        <br>
+
+                        <p><strong>🕵️ Double Agent:</strong></p>
+                        <p>One player gets a special role — they know the word <em>and</em> know who the imposter is. Their mission: subtly help the imposter escape detection. <span class="positive">+15 points</span> if they succeed, <span class="negative">-10</span> if exposed.</p>
+                        <br>
+
+                        <p><strong>🔗 Word Association:</strong></p>
+                        <p>Each player, in turn, says <em>one word</em> associated with the secret. The imposter must blend in without knowing the word. The toughest mode for imposters!</p>
+                        <br>
+
+                        <p><strong>💣 Time Bomb:</strong></p>
+                        <p>A short shared timer (60 seconds) for the whole discussion. When time runs out, the player speaking last (or picked at random) becomes the prime suspect. Adds tension and speed.</p>
+                        <br>
+
+                        <p><strong>🎭 Fake Imposters:</strong></p>
+                        <p>1-2 players are told they are imposters <em>but actually see the real word</em>! The real imposters only see the hint. Pure chaos — no one trusts anyone.</p>
+                        <br>
+
+                        <p><strong>😈 Truth or Dare:</strong></p>
+                        <p>When the imposter is caught, they must answer a randomly drawn Truth question or perform a Dare. All prompts are family-friendly.</p>
+                        <br>
+
+                        <p><strong>💡 Tip:</strong> Try a different mode each round to keep things fresh.</p>
+                    </div>
                 </div>
             `
+        }
+    };
+
+    // ===============================
+    // PRIVATE VAULT ("حسن" category)
+    // Plaintext lives nowhere in this repo. AES-GCM with PBKDF2-SHA256.
+    // Decrypted in-memory only after correct password; never persisted.
+    // ===============================
+    const HASAN_VAULT = {"s":"a6YRPvMw6Yuq+nj5SmMIYg==","i":"zTFEy6AF/QsvmMSD","c":"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","iter":200000,"v":1};
+
+    const HasanVault = {
+        _words: null,
+        _unlocked: false,
+        isUnlocked() { return this._unlocked; },
+        getWords() { return this._words || []; },
+        clear() { this._words = null; this._unlocked = false; },
+        async tryUnlock(password) {
+            if (this._unlocked) return true;
+            if (!password) throw new Error('empty');
+            const b64ToBytes = (b64) => {
+                const bin = atob(b64);
+                const out = new Uint8Array(bin.length);
+                for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+                return out;
+            };
+            const subtle = (window.crypto || {}).subtle;
+            if (!subtle) throw new Error('crypto-unavailable');
+            try {
+                const enc = new TextEncoder();
+                const salt = b64ToBytes(HASAN_VAULT.s);
+                const iv = b64ToBytes(HASAN_VAULT.i);
+                const ct = b64ToBytes(HASAN_VAULT.c);
+                const keyMat = await subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+                const key = await subtle.deriveKey(
+                    { name: 'PBKDF2', salt, iterations: HASAN_VAULT.iter || 200000, hash: 'SHA-256' },
+                    keyMat,
+                    { name: 'AES-GCM', length: 256 },
+                    false,
+                    ['decrypt']
+                );
+                const plain = await subtle.decrypt({ name: 'AES-GCM', iv }, key, ct);
+                const json = new TextDecoder().decode(plain);
+                this._words = JSON.parse(json);
+                this._unlocked = true;
+                return true;
+            } catch (e) {
+                this._unlocked = false;
+                this._words = null;
+                return false;
+            }
         }
     };
 
@@ -2964,6 +3132,11 @@
         // Show home screen if on language screen
         if (document.getElementById('langScreen').classList.contains('active')) {
             showScreen('homeScreen');
+            if (typeof shouldShowEmailSignup === 'function' && shouldShowEmailSignup()) {
+                setTimeout(() => {
+                    if (!document.querySelector('.modal.active')) showEmailSignup();
+                }, 1200);
+            }
         }
     }
 
@@ -3049,6 +3222,9 @@
                 <option value="english_objects">${t('cat_english_objects')}</option>
             </optgroup>
             ${customOptions ? `<optgroup label="${currentLang === 'ar' ? '📚 فئاتي' : '📚 My Categories'}">${customOptions}</optgroup>` : ''}
+            <optgroup label="${currentLang === 'ar' ? '🔒 خاص' : '🔒 Private'}">
+                <option value="hasan">${t('cat_hasan')}${HasanVault.isUnlocked() ? ' ✓' : ''}</option>
+            </optgroup>
         `;
         if (prev && select.querySelector(`option[value="${prev}"]`)) {
             select.value = prev;
@@ -3322,6 +3498,9 @@
 
     // Build word list for a category id (supports "custom:ID" and "__mixed__")
     function getWordsForCategory(catId, selectedCats) {
+        if (catId === 'hasan') {
+            return HasanVault.isUnlocked() ? HasanVault.getWords() : [];
+        }
         if (catId === '__mixed__') {
             // selectedCats is an array of category ids; default to all built-in
             const cats = selectedCats && selectedCats.length ? selectedCats : Object.keys(WORDS);
@@ -4026,6 +4205,12 @@
 
         if (imposterCount >= currentSession.players.length) {
             Toast.error(t('tooManyImposters'));
+            return;
+        }
+
+        // Gate Hasan category behind password
+        if (category === 'hasan' && !HasanVault.isUnlocked()) {
+            promptHasanUnlock(() => startGame());
             return;
         }
 
@@ -5571,6 +5756,99 @@
             btn.style.display = exists ? 'block' : 'none';
         }
     }
+    // ===============================
+    // HASAN VAULT UNLOCK FLOW
+    // ===============================
+    let _hasanUnlockOnSuccess = null;
+    function promptHasanUnlock(onSuccess) {
+        _hasanUnlockOnSuccess = onSuccess;
+        const modal = document.getElementById('hasanUnlockModal');
+        const input = document.getElementById('hasanPwdInput');
+        const err = document.getElementById('hasanPwdError');
+        input.value = '';
+        err.textContent = '';
+        modal.classList.add('active');
+        setTimeout(() => input.focus(), 50);
+    }
+    async function _attemptHasanUnlock() {
+        const input = document.getElementById('hasanPwdInput');
+        const err = document.getElementById('hasanPwdError');
+        const btn = document.getElementById('hasanUnlockBtn');
+        const pwd = input.value;
+        err.textContent = '';
+        btn.disabled = true;
+        const ok = await HasanVault.tryUnlock(pwd);
+        btn.disabled = false;
+        if (ok) {
+            document.getElementById('hasanUnlockModal').classList.remove('active');
+            if (typeof Toast !== 'undefined' && Toast.success) Toast.success(t('hasanUnlocked'));
+            updateCategorySelect();
+            const sel = document.getElementById('categorySelect');
+            if (sel) sel.value = 'hasan';
+            const cb = _hasanUnlockOnSuccess; _hasanUnlockOnSuccess = null;
+            if (cb) cb();
+        } else {
+            err.textContent = t('hasanWrongPwd');
+            input.select();
+        }
+    }
+
+    // ===============================
+    // EMAIL SIGNUP (Formspree)
+    // ===============================
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xeendkrq';
+    function shouldShowEmailSignup() {
+        return !localStorage.getItem('imposterEmailAsked');
+    }
+    function markEmailAsked() {
+        try { localStorage.setItem('imposterEmailAsked', '1'); } catch(e) {}
+    }
+    function showEmailSignup() {
+        document.getElementById('emailSignupModal').classList.add('active');
+        const input = document.getElementById('emailSignupInput');
+        if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
+        document.getElementById('emailSignupError').textContent = '';
+    }
+    async function _submitEmailSignup() {
+        const input = document.getElementById('emailSignupInput');
+        const err = document.getElementById('emailSignupError');
+        const btn = document.getElementById('emailSignupSubmit');
+        const email = (input.value || '').trim();
+        err.textContent = '';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            err.textContent = t('emailSignupBadFormat');
+            return;
+        }
+        btn.disabled = true;
+        try {
+            const res = await fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    source: 'imposter-game',
+                    lang: currentLang,
+                    timestamp: new Date().toISOString()
+                })
+            });
+            if (res.ok) {
+                if (typeof Toast !== 'undefined' && Toast.success) Toast.success(t('emailSignupOk'));
+                markEmailAsked();
+                document.getElementById('emailSignupModal').classList.remove('active');
+            } else {
+                err.textContent = t('emailSignupFail');
+            }
+        } catch (e) {
+            err.textContent = t('emailSignupFail');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+    function _skipEmailSignup() {
+        markEmailAsked();
+        document.getElementById('emailSignupModal').classList.remove('active');
+    }
+
     window.addEventListener('load', () => {
         Theme.init();
         // Check for saved language preference
@@ -5585,9 +5863,38 @@
             initQuickStartButton();
             showScreen('homeScreen');
             setTimeout(maybeShowWhatsNew, 600);
+            // Offer email signup once, after the What's New modal has had time to settle
+            if (shouldShowEmailSignup()) {
+                setTimeout(() => {
+                    if (!document.querySelector('.modal.active')) showEmailSignup();
+                }, 2500);
+            }
         } else {
             showScreen('langScreen');
         }
+
+        // Wire Hasan unlock modal buttons
+        const hUnlockBtn = document.getElementById('hasanUnlockBtn');
+        const hCancelBtn = document.getElementById('hasanUnlockCancelBtn');
+        const hInput = document.getElementById('hasanPwdInput');
+        if (hUnlockBtn) hUnlockBtn.addEventListener('click', _attemptHasanUnlock);
+        if (hCancelBtn) hCancelBtn.addEventListener('click', () => {
+            document.getElementById('hasanUnlockModal').classList.remove('active');
+            _hasanUnlockOnSuccess = null;
+        });
+        if (hInput) hInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') _attemptHasanUnlock();
+        });
+
+        // Wire email signup modal buttons
+        const eSubmit = document.getElementById('emailSignupSubmit');
+        const eSkip = document.getElementById('emailSignupSkip');
+        const eInput = document.getElementById('emailSignupInput');
+        if (eSubmit) eSubmit.addEventListener('click', _submitEmailSignup);
+        if (eSkip) eSkip.addEventListener('click', _skipEmailSignup);
+        if (eInput) eInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') _submitEmailSignup();
+        });
     });
     
     window.onerror = function(msg, url, lineNo, columnNo, error) {
