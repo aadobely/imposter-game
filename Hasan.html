@@ -784,6 +784,10 @@
     body.dark .session-info, body.dark .score-breakdown { color: #b8b8c8; }
     body.dark .vote-card { background: #0f3460; color: #eaeaea; }
     body.dark .vote-card.selected { background: #2a3f6f; border-color: #e94560; }
+    body.dark .vote-card-name { color: #eaeaea; }
+    body.dark .muted-text { color: #b8b8c8 !important; }
+    body.dark .next-player-name { color: #ffeaa7; }
+    body.dark .selected-speaker { color: #1a1a2e; }
     body.dark .modal-content { background: #16213e; color: #eaeaea; }
     body.dark .modal-title { color: #e94560; }
     body.dark .lang-btn { background: #16213e; color: #eaeaea; border-color: #e94560; }
@@ -1155,11 +1159,12 @@
     <div id="firstPlayerScreen" class="screen">
         <div style="text-align: center; padding: 40px 20px;">
             <h1 style="margin-bottom: 20px;">🎲 <span data-t="whoStarts"></span></h1>
-            <p style="font-size: 18px; color: #666; margin-bottom: 30px;" data-t="pressToSelect"></p>
+            <p class="muted-text" style="font-size: 18px; color: #666; margin-bottom: 30px;" data-t="pressToSelect"></p>
             <button class="btn btn-success" onclick="selectFirstPlayer()" id="selectFirstBtn" style="font-size: 24px;">
                 🎯 <span data-t="randomSelect"></span>
             </button>
             <div id="firstPlayerResult" style="margin-top: 30px;"></div>
+            <button class="btn btn-secondary" onclick="abortCurrentRound()" style="margin-top: 30px;">🔙 <span data-t="backToSession"></span></button>
         </div>
     </div>
 
@@ -1170,6 +1175,7 @@
             <button class="btn btn-success" id="revealCardBtn" onclick="revealCard()">👁️ <span data-t="pressToReveal"></span></button>
             <div id="cardContainer"></div>
             <div id="nextPlayerBtn"></div>
+            <button class="btn btn-danger" onclick="abortCurrentRound()" style="margin-top: 20px;">❌ <span data-t="abortRound"></span></button>
         </div>
     </div>
 
@@ -1183,18 +1189,20 @@
         <h1>💬 <span data-t="discussionTime"></span></h1>
         <div class="timer-container" id="timerContainer"></div>
         <button class="btn" onclick="proceedToVoting()">🗳️ <span data-t="goToVoting"></span></button>
+        <button class="btn btn-danger" onclick="abortCurrentRound()">❌ <span data-t="abortRound"></span></button>
     </div>
 
     <!-- Voting Screen -->
     <div id="votingScreen" class="screen">
         <h1>🗳️ <span data-t="voting"></span></h1>
         <div class="voting-turn">
-            <p style="font-size: 18px; color: #666; margin-bottom: 10px;" data-t="votingTurn"></p>
+            <p class="muted-text" style="font-size: 18px; color: #666; margin-bottom: 10px;" data-t="votingTurn"></p>
             <div class="current-voter" id="currentVoter"></div>
             <div id="votingInstructions"></div>
         </div>
         <div id="voteGrid" class="vote-grid"></div>
         <button class="btn" id="submitVoteBtn" onclick="submitCurrentVote()">✅ <span data-t="confirmVote"></span></button>
+        <button class="btn btn-danger" onclick="abortCurrentRound()">❌ <span data-t="abortRound"></span></button>
     </div>
 
     <!-- Suspense Screen -->
@@ -1206,6 +1214,7 @@
                 🔍 <span data-t="revealImposter"></span>
             </button>
         </div>
+        <button class="btn btn-secondary" onclick="abortCurrentRound()" style="margin-top: 20px;">❌ <span data-t="abortRound"></span></button>
     </div>
 
     <!-- Results Screen -->
@@ -1592,6 +1601,9 @@
             currentHolder: "يحمل القنبلة الآن:",
             passBomb: "تمرير القنبلة",
             endRound: "إنهاء الجولة الآن",
+            abortRound: "إنهاء وإعادة",
+            abortRoundConfirm: "هل تريد إنهاء هذه الجولة والعودة إلى الجلسة؟ لن تُسجَّل أي نقاط.",
+            backToSession: "رجوع للجلسة",
             bombExploded: "💥 انفجرت القنبلة!",
             accusedIs: "المتهم هو:",
             finalGuessTitle: "تخمين الكلمة!",
@@ -1972,6 +1984,9 @@
             currentHolder: "Bomb is currently with:",
             passBomb: "Pass the bomb",
             endRound: "End round now",
+            abortRound: "End & restart",
+            abortRoundConfirm: "End this round and return to the session? No points will be saved.",
+            backToSession: "Back to session",
             bombExploded: "💥 The bomb exploded!",
             accusedIs: "The accused is:",
             finalGuessTitle: "Guess the Word!",
@@ -5472,6 +5487,31 @@
     function playAgain() {
         // Preserve mode in session
         loadSessionDetail(currentSession.id);
+    }
+
+    // Abort the in-progress round and return to session detail without scoring.
+    // Used by the End/Back buttons on first-player, card-reveal, discussion,
+    // voting, and suspense screens.
+    function abortCurrentRound() {
+        showConfirm('❌ ' + t('abortRound'), t('abortRoundConfirm'), () => {
+            if (bombInterval) { clearInterval(bombInterval); bombInterval = null; }
+            if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+            // Hide privacy overlay if showing
+            const pscr = document.getElementById('privacyScreen');
+            if (pscr) pscr.classList.remove('active');
+            // Reset round-only state; keep session intact
+            currentGame = null;
+            currentPlayerIndex = 0;
+            currentVoterIndex = 0;
+            allVotes = [];
+            currentVotes = [];
+            selectedFirstPlayerIndex = -1;
+            if (currentSession) {
+                loadSessionDetail(currentSession.id);
+            } else {
+                showScreen('homeScreen');
+            }
+        });
     }
 
     function endSession() {
