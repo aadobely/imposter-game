@@ -61,12 +61,41 @@
 
     .screen {
         display: none;
+        position: relative;
     }
 
     .screen.active {
         display: block;
         animation: fadeIn 0.3s ease-out;
     }
+
+    /* Small unobtrusive abort/back control pinned to top-left of a screen.
+       Stays out of the player's interaction area so it isn't tapped by mistake. */
+    .btn-abort-corner {
+        position: absolute;
+        top: -10px;
+        left: -10px;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0,0,0,0.18);
+        color: #fff;
+        font-size: 14px;
+        line-height: 32px;
+        text-align: center;
+        cursor: pointer;
+        opacity: 0.55;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        z-index: 10;
+    }
+    .btn-abort-corner:hover, .btn-abort-corner:focus {
+        opacity: 1;
+        transform: scale(1.08);
+        outline: none;
+    }
+    body.dark .btn-abort-corner { background: rgba(255,255,255,0.15); color: #eaeaea; }
 
     @keyframes fadeIn {
         from { opacity: 0; }
@@ -1157,6 +1186,7 @@
 
     <!-- First Player Selection Screen -->
     <div id="firstPlayerScreen" class="screen">
+        <button class="btn-abort-corner" onclick="abortCurrentRound()" aria-label="abort" title="">✖</button>
         <div style="text-align: center; padding: 40px 20px;">
             <h1 style="margin-bottom: 20px;">🎲 <span data-t="whoStarts"></span></h1>
             <p class="muted-text" style="font-size: 18px; color: #666; margin-bottom: 30px;" data-t="pressToSelect"></p>
@@ -1164,18 +1194,17 @@
                 🎯 <span data-t="randomSelect"></span>
             </button>
             <div id="firstPlayerResult" style="margin-top: 30px;"></div>
-            <button class="btn btn-secondary" onclick="abortCurrentRound()" style="margin-top: 30px;">🔙 <span data-t="backToSession"></span></button>
         </div>
     </div>
 
     <!-- Card Reveal Screen -->
     <div id="cardRevealScreen" class="screen">
+        <button class="btn-abort-corner" onclick="abortCurrentRound()" aria-label="abort" title="">✖</button>
         <div class="card-reveal">
             <h2 id="currentPlayerName" style="font-size: 28px; margin-bottom: 20px;"></h2>
             <button class="btn btn-success" id="revealCardBtn" onclick="revealCard()">👁️ <span data-t="pressToReveal"></span></button>
             <div id="cardContainer"></div>
             <div id="nextPlayerBtn"></div>
-            <button class="btn btn-danger" onclick="abortCurrentRound()" style="margin-top: 20px;">❌ <span data-t="abortRound"></span></button>
         </div>
     </div>
 
@@ -1186,14 +1215,15 @@
 
     <!-- Discussion Screen -->
     <div id="discussionScreen" class="screen">
+        <button class="btn-abort-corner" onclick="abortCurrentRound()" aria-label="abort" title="">✖</button>
         <h1>💬 <span data-t="discussionTime"></span></h1>
         <div class="timer-container" id="timerContainer"></div>
         <button class="btn" onclick="proceedToVoting()">🗳️ <span data-t="goToVoting"></span></button>
-        <button class="btn btn-danger" onclick="abortCurrentRound()">❌ <span data-t="abortRound"></span></button>
     </div>
 
     <!-- Voting Screen -->
     <div id="votingScreen" class="screen">
+        <button class="btn-abort-corner" onclick="abortCurrentRound()" aria-label="abort" title="">✖</button>
         <h1>🗳️ <span data-t="voting"></span></h1>
         <div class="voting-turn">
             <p class="muted-text" style="font-size: 18px; color: #666; margin-bottom: 10px;" data-t="votingTurn"></p>
@@ -1202,11 +1232,11 @@
         </div>
         <div id="voteGrid" class="vote-grid"></div>
         <button class="btn" id="submitVoteBtn" onclick="submitCurrentVote()">✅ <span data-t="confirmVote"></span></button>
-        <button class="btn btn-danger" onclick="abortCurrentRound()">❌ <span data-t="abortRound"></span></button>
     </div>
 
     <!-- Suspense Screen -->
     <div id="suspenseScreen" class="screen">
+        <button class="btn-abort-corner" onclick="abortCurrentRound()" aria-label="abort" title="">✖</button>
         <div class="suspense-container">
             <h1>🎭 <span data-t="momentOfTruth"></span></h1>
             <div class="suspense-text" id="suspenseText"></div>
@@ -1214,7 +1244,6 @@
                 🔍 <span data-t="revealImposter"></span>
             </button>
         </div>
-        <button class="btn btn-secondary" onclick="abortCurrentRound()" style="margin-top: 20px;">❌ <span data-t="abortRound"></span></button>
     </div>
 
     <!-- Results Screen -->
