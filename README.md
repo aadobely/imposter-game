@@ -74,15 +74,15 @@ A bilingual Arabic + English party game where players hunt the imposter hiding a
 
 ## 🎮 Game Modes | أنماط اللعب
 
-| Mode | Description |
-|------|-------------|
-| 🎭 **Classic** | Everyone sees the word, imposter sees only a hint (or nothing). |
-| 🔄 **Reverse** | The imposter is the only one who knows the word. Regular players must collectively guess it. |
-| 🕵️ **Double Agent** | A special player knows the word *and* who the imposter is — and must help them escape. |
-| 🔗 **Word Association** | Each player says one related word in turn. The imposter must blend in without knowing the word. |
-| 💣 **Time Bomb** | A short shared timer (60s) for the whole discussion. Whoever holds the bomb when it explodes is accused. |
-| 🎪 **Fake Imposters** | 1-2 players are told they are imposters but actually see the real word. Pure chaos. |
-| 😈 **Truth or Dare** | When caught, the imposter answers a Truth question or performs a Dare. |
+| النمط / Mode | الشرح بالعربية | Description |
+|--------------|-----------------|-------------|
+| 🎭 **الكلاسيكي / Classic** | الكل يرى الكلمة، والمحتال يرى تلميحاً فقط (أو لا شيء). | Everyone sees the word; the imposter sees only a hint (or nothing). |
+| 🔄 **المعكوس / Reverse** | المحتال هو الوحيد الذي يعرف الكلمة، واللاعبون العاديون يحاولون تخمينها جماعياً. | The imposter is the only one who knows the word; regular players must collectively guess it. |
+| 🕵️ **العميل المزدوج / Double Agent** | لاعب خاص يعرف الكلمة *ويعرف* من هو المحتال، ومهمته مساعدته على الهروب. | A special player knows the word *and* the imposter's identity — and must help them escape. |
+| 🔗 **تسلسل الكلمات / Word Association** | كل لاعب يقول كلمة واحدة مرتبطة بالسر، والمحتال يجب أن يتأقلم بدون أن يعرف الكلمة. | Each player says one related word in turn. The imposter must blend in without knowing the word. |
+| 💣 **القنبلة الموقوتة / Time Bomb** | مؤقت مشترك قصير (60 ثانية) للنقاش كله، ومن تكون القنبلة معه عند انفجارها يصبح المتهم. | A short shared timer (60s) for the whole discussion. Whoever holds the bomb when it explodes is accused. |
+| 🎪 **المحتالون المزيفون / Fake Imposters** | 1-2 لاعبين يُخبَرون أنهم محتالون لكنهم يرون الكلمة الحقيقية. فوضى مضمونة. | 1-2 players are told they are imposters but actually see the real word. Pure chaos. |
+| 😈 **صراحة أو جرأة / Truth or Dare** | عند انكشاف المحتال يجب عليه الإجابة على سؤال "صراحة" أو تنفيذ تحدي "جرأة". | When caught, the imposter answers a Truth question or performs a Dare. |
 
 ---
 
