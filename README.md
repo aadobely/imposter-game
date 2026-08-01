@@ -6,7 +6,7 @@ A bilingual Arabic + English party game where players hunt the imposter hiding a
 
 ## 🎮 Play Now | العب الآن
 
-**[Play the Game](https://aadobely.github.io/imposter-game/Hasan.html)**
+**[Play the Game](https://qutira.github.io/imposter-game/Hasan.html)**
 
 > Current version: **v2.1**
 
