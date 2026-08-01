@@ -169,4 +169,4 @@ Made with ❤️ for Arabic-speaking communities
 
 صُنعت بـ ❤️ للمجتمعات الناطقة بالعربية
 
-من حسن adobely
+من حسن · Made by Hasan (github.com/qutira)
